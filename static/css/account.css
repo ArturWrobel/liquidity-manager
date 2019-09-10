@@ -1,0 +1,28 @@
+table,th,tr {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+  table tr:nth-child(odd) th {background-color: #f9f9f9}
+  table tr:nth-child(even) th {background-color: #dadada}
+  
+  table {
+    width: 100%;}
+  
+  tr,th {font-weight: normal;}
+  
+  .label {
+      font-weight: bolder;
+      font-size: larger;
+  }
+  
+  #form_acc {
+      border: inherit;
+      margin-top: 10px;
+      margin-left: 65%
+   }
+
+   .sticky {
+    position: fixed;
+    top: 7%
+   
+}

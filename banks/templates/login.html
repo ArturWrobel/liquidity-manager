@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block user %}
+{% endblock %}
+
+{% block content %}
+
+<p> {{ text }} </p>
+
+<form action="" method="post">
+  {% csrf_token %}
+  <h2 id = "ticket_center">Login Page</h2>
+  <hr>
+  <div class="imgcontainer">
+      <img src="{% static "img/orange logo.jpg" %}" alt="Avatar" class="avatar">
+    </div>
+  {% for field in form %}
+    <div class="textWrapper">
+      <br>
+      {{field.label_tag}} {{field}}
+
+    </div>
+  {% endfor %}
+    <br>
+  <input type="submit" value="Login" class="textWrapper button_form">
+  <br>
+  <br>
+
+{% endblock %}

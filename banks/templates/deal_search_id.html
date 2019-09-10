@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<form action="" method="get" id="sf">
+
+  <h2 id="ticket_center">Deal search by number</h2>
+  <hr>
+  {% for field in form %}
+  <div class="textWrapper">
+    <br>
+    {{field.label_tag}} {{field}}
+
+  </div>
+  {% endfor %}
+  <br>
+  <input type="submit" value="Search" class="textWrapper button_form">
+  <br>
+  <br>
+</form>
+
+
+<script>
+  
+  $(document).ready(function () {
+    $('#sf').submit(function (event) {
+      var filterParams = {};
+      filterParams['number_contains'] = $('#id_number_contains').val();
+      filterParams['number_from'] = $('#id_number_from').val();
+      filterParams['number_upto'] = $('#id_number_upto').val();
+      filterParams['view_type'] = 'ajax';
+      $.get('/dealsearch_id/',filterParams,function(data){
+        var d = $('<div>');
+        d.html(data);
+        d.dialog({'title':'Search result', width: 900, height: 600, show: {effect: 'fadeIn', duration:800}});
+      });
+      return false;
+    });
+  });
+</script>
+
+
+{% endblock %}

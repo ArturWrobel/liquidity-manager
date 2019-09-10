@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load humanize %}
+    {{ floatvalue|floatformat:2|intcomma }}
+
+<form method="POST"> {% csrf_token %}
+    <h2 class = "textWrapper">Spot deal update </h2>
+    <p class = "textWrapper">Deal number: {{obj.deal_number}}</p>
+    <hr>
+{% for field in form %}
+    <div class="textWrapper">
+      <br>
+      {{field.label_tag}} {{field}}
+
+    </div>
+  {% endfor %}
+<br>
+<input class = "textWrapper" type="submit" value="Save"/>
+<br>
+<br>
+</form>
+
+
+{% endblock %}

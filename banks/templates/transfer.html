@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form action="" method="post">
+  {% csrf_token %}
+  <h2 id = "ticket_center">Transfer</h2>
+  <hr>
+  {% for field in form %}
+    <div class="textWrapper">
+      <br>
+      {{field.label_tag}} {{field}}
+
+    </div>
+  {% endfor %}
+    <br>
+  <input type="submit" value="New Transfer" class="textWrapper button_form">
+  <br>
+  <br>
+</form>
+
+{% endblock %}

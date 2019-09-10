@@ -1,0 +1,95 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Navbar</title>
+</head>
+
+<body>
+
+  <div class="navbar">
+    <a href="/home">Home</a>
+    <div class="dropdown">
+      <button class="dropbtn" style="font-weight:bold">Accounts
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content">
+        <a href="/bank_acc/Citi">Citi</a>
+        <a href="/bank_acc/mBank">mBank</a>
+        <a href="/bank_acc/Societe">Societe</a>
+        <a href="/bank_acc/Santander">Santander</a>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button class="dropbtn" style="font-weight:bold">Execute
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content">
+        <a href="/depo">Depo</a>
+        <a href="/spot">FX</a>
+        <a href="/txfr">Transfer</a>
+        <a href="#">Interest rate</a>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button class="dropbtn" style="font-weight:bold">Reports
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content">
+        <a href="/dealsearch">Deals search</a>
+        <a href="/dealsearch_id">Deals search by number</a>
+        <a href="#">Limits</a>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button class="dropbtn" style="font-weight:bold">Data
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content">
+        <a href="/upload">Data upload</a>
+        <a href="/dataimport">Flows data import</a>
+        <a href="/marketdataimport">Market data import</a>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button class="dropbtn" style="font-weight:bold">Valuations
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content">
+        <a href="/curves">Yield curves</a>
+        <a href="/yieldchart">Yield curves chart</a>
+        <a href="#">FX valuation</a>
+        <a href="#">IR valuation</a>
+      </div>
+    </div>
+
+    <div class="dropdown">
+      <button class="dropbtn" style="font-weight:bold">Hedging
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content">
+        <a href="#">FX</a>
+        <a href="#">Interest Rate</a>
+      </div>
+    </div>
+
+    <a href="#news">About</a>
+    <a href="/logout">Logout</a>
+
+    <b>{{ title }}</b>
+
+  </div>
+
+  <div class="footer">
+    <p>{{ user.first_name }}</p>
+  </div>
+
+</body>
+
+</html>

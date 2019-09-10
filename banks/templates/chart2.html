@@ -1,0 +1,86 @@
+{% extends 'basechart.html' %}
+
+<script>
+{% block jquery %}
+
+var url = window.location.pathname;
+var bank = url.substring(url.lastIndexOf('/')+1);
+var endpoint = '/api/chart/data2/'+ bank
+$("#title").text("Liquidity on " + bank + " account");
+var defaultData = []
+var end_bal = []
+var outf = []
+var infl = []
+var labels = [];
+$.ajax({
+    method: "GET",
+    url: endpoint,
+    success: function(data){
+        labels = data.labels
+        defaultData = data.default
+        outf = data.outf
+        infl = data.infl
+        end_bal = data.end_bal
+        setChart2()
+    },
+    error: function(error_data){
+        console.log("error")
+        console.log(error_data)
+    }
+})
+
+function setChart2(){
+var mix = document.getElementById("mixChart").getContext('2d');
+var mixChart = new Chart(mix, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                type: 'line',
+                label: "balance",
+                data: end_bal,
+                borderColor: 'rgba(153, 102, 255, 1)',
+                backgroundColor: 'rgba(0, 0, 0, 0)',
+                borderWidth: 2,               
+               
+            },
+            {
+                label: "outflows",
+                data: outf,
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.4)',
+                borderWidth: 1,
+                
+            },
+            {
+                label: "inflows",
+                data: infl,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.4)',
+                borderWidth: 1,
+                
+            }
+        ]
+    },
+});
+}
+{% endblock %}
+</script>
+
+{% block content %}
+
+<div class='row'>
+    <div class='col-sm-12'>
+        <h3 id = "title"></h3>
+        
+        <div class='col-sm-12'>
+            <canvas id="mixChart" width="1600" height="900"></canvas>
+        </div>
+
+        <input type="button" value="Go back" onclick="history.back(-1)">
+
+    </div>
+</div>
+
+{% endblock content %}

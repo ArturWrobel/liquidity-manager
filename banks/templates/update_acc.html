@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load humanize %}
+    {{ floatvalue|floatformat:2|intcomma }}
+
+<form method="POST"> {% csrf_token %}
+<p class = "textWrapper">Date: {{ obj.date|date:'Y-m-d' }}</p>
+<p class = "textWrapper">Start: {{ obj.start_balance|floatformat:2 }}</p>
+<p class = "textWrapper">End: {{ obj.end_balance|floatformat:2 }}</p>
+    <hr>
+{% for field in form %}
+    <div class="textWrapper">
+      <br>
+      {{field.label_tag}} {{field}}
+
+    </div>
+  {% endfor %}
+<br>
+<input class = "textWrapper" type="submit" value="Save"/>
+<br>
+<br>
+</form>
+
+
+{% endblock %}

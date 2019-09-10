@@ -1,0 +1,37 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>{{ title }}</title>
+</head>
+
+<body>
+    {% include 'navbar.html' %}
+    
+    <h1> Welcome {{user.first_name}}!!! </h1>
+    
+    <div id = "homelogo">
+        <img  src="{% static "img/orange logo.jpg" %}">
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script> 
+            $(document).ready(function(){
+                  $("#homelogo").animate({
+                  left: '40%',
+                  opacity: '1'
+                  },
+                  {duration: 2000});
+            });
+    </script> 
+    <script src="{% static 'js/app.js' %}"></script>
+
+</body>
+
+</html>
+

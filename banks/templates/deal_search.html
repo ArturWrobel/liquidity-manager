@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<form action="" method="get" id="sf">
+
+  <h2 id="ticket_center">Deal search</h2>
+  <hr>
+  {% for field in form %}
+  <div class="textWrapper">
+    <br>
+    {{field.label_tag}} {{field}}
+
+  </div>
+  {% endfor %}
+  <br>
+  <input id="but" type="submit" value="Search" class="textWrapper button_form">
+  <br>
+  <br>
+</form>
+
+
+<script>
+  var a = "deal search works"
+      console.log(a)
+  $(document).ready(function () {
+    $('#sf').submit(function (event) {
+      var filterParams = {};
+      
+
+      filterParams['number_contains'] = $('#id_number_contains').val();
+      filterParams['start_date'] = $('#id_start_date').val();
+      filterParams['id_end_date'] = $('#id_end_date').val();
+      filterParams['counterparty'] = $('#id_counterparty').val();
+      filterParams['date_choice'] =$('input[name="date_choice"]:checked').val();
+      filterParams['view_type'] = 'ajax';
+      $.get('/dealsearch/',filterParams,function(data){
+        var d = $('<div>');
+        d.html(data);
+        d.dialog({'title':'Search result', width: 900, height: 600, show: {effect: 'fadeIn', duration:800}});
+      });
+      return false;
+    });
+  });
+</script>
+
+
+{% endblock %}

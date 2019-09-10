@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <form method="get" id = "ff">
+
+      <h2 id="ticket_center">Deal search</h2>
+      {% for field in filter.form %}
+      <div class="textWrapper">
+        <br>
+        {{field.label_tag}} {{field}}
+    
+      </div>
+      {% endfor %}
+      <br>
+      <input id="but" type="submit" value="Search" class="textWrapper button_form">
+      <br>
+      <br>
+    </form>
+
+
+  <script>
+    var a = "deal filter form"
+        console.log(a)
+
+    $(document).ready(function () {
+      $('#ff').submit(function (event) {
+        var filterParams = {};
+        
+  
+        filterParams['deal_number__contains'] = $('#id_deal_number__contains').val();
+        filterParams['deal_number__gte'] = $('#id_deal_number__gte').val();
+        filterParams['deal_number__lte'] = $('#id_deal_number__lte').val();
+        filterParams['counterparty'] = $('#id_counterparty').val();
+        filterParams['deal_kind'] = $('#id_deal_kind').val();
+        filterParams['frontoffice'] = $('#id_frontoffice').val();
+        filterParams['ordering'] = $('#id_ordering').val();
+        filterParams['deal_date__gte'] = $('#id_deal_date__gte').val();
+        filterParams['deal_date__lte'] = $('#id_deal_date__lte').val();
+        filterParams['value_date__gte'] = $('#id_value_date__gte').val();
+        filterParams['value_date__lte'] = $('#id_value_date__lte').val();
+
+        filterParams['view_type'] = 'ajax';
+
+        var b = filterParams;
+        console.log(b);
+
+        $.get('/dealsfilter/',filterParams,function(data){
+          var d = $('<div>');
+          d.html(data);
+          d.dialog({'title':'Search result', width: 900, height: 600, show: {effect: 'fadeIn', duration:800}});
+        });
+        return false;
+      });
+    });
+  </script>
+  
+
+{% endblock %}

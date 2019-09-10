@@ -1,0 +1,124 @@
+{% extends "base1.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+.dropdown:hover>.dropdown-menu{
+    display: block
+}
+</style>
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-light" style="background-color: rgba(223, 214, 178); height: 7%;">
+        <a class="navbar-brand" href="#">
+        <img src="{% static "img/orange logo.jpg" %}" width="40" height="40" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/home">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Accounts
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="/bank_acc/Citi">Citi</a>
+                <a class="dropdown-item" href="/bank_acc/mBank">mBank</a>
+                <a class="dropdown-item" href="/bank_acc/Societe">Societe</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="/bank_acc/Santander">Santander</a>
+              </div>
+            </li>
+
+            <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Execute
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="/depo">Depo</a>
+                      <a class="dropdown-item" href="/spot">FX</a>
+                      <a class="dropdown-item" href="/txfr">Transfer</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="#">IRS</a>
+                      <a class="dropdown-item" href="#">CIRS</a>
+                    </div>
+            </li>
+
+            <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                         Search
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                          <a class="dropdown-item" href="/dealsearch">Deal search</a>
+                          <a class="dropdown-item" href="/dealsearch_id">Deals search by number</a>
+                          <a class="dropdown-item" href="/dealsfilter">Dealsfilter</a>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="#">Limits</a>
+                        </div>
+            </li>
+
+            <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Data
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="/upload">Data upload</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="/dataimport">Flows data import</a>
+                      <a class="dropdown-item" href="/marketdataimport">Market data import</a>
+                    </div>
+            </li>
+            
+            <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Valuations
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="/curves">Yield curves</a>
+                      <a class="dropdown-item" href="/yieldchart">Yield curves chart</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="#">FX valuation</a>
+                      <a class="dropdown-item" href="#">IR valuation</a>
+                    </div>
+            </li>
+
+            <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Hedging
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="#">FX</a>
+                      <a class="dropdown-item" href="#">Interest Rate</a>
+                    </div>
+            </li>
+            
+            <li class="nav-item active">
+                    <a class="nav-link" href="#">About <span class="sr-only">(current)</span></a>
+            </li>
+            
+            <li class="nav-item active">
+                    <a class="nav-link" href="/logout">Logout <span class="sr-only">(current)</span></a>
+                  </li>
+
+
+                  <li class="nav-item active">
+                        <a class="nav-link" href="#">{{ title }}<span class="sr-only">(current)</span></a>
+                      </li>
+
+          </ul>
+          
+        </div>
+      </nav>
+
+    
+            <nav class="navbar fixed-bottom navbar-light" style="background-color:rgba(223, 214, 178); height: 4%; text-align: center; display: block">
+            <a> {{ user.first_name }} </a>
+          </nav>
+
+      {% endblock %}
+      

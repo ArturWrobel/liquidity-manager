@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+.move {background:sandybrown; position: relative; left:1rem; font-weight: 700;
+    padding-right: 20px; padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center }
+  
+.container{
+display: flex;
+padding: 2px 2px;
+
+}
+.box1 {
+    flex: 1;
+}
+.cent {text-align: center}
+
+ </style>
+{% load humanize %}
+    {{ floatvalue|floatformat:2|intcomma }}
+
+<div class="container">
+        <div class="box1"> </div>
+        <div class="box1 cent"><h3>PLN ({{pcurve.date|date:'Y-m-d'}})</h3>
+            <div class="container"> <div class="box1">1M</div> <div class="move box2">{{pcurve.m1|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">3M</div> <div class="move box2">{{pcurve.m3|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">6M</div> <div class="move box2">{{pcurve.m6|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">1Y</div> <div class="move box2">{{pcurve.y1|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">2Y</div> <div class="move box2">{{pcurve.y2|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">3Y</div> <div class="move box2">{{pcurve.y3|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">4Y</div> <div class="move box2">{{pcurve.y4|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">5Y</div> <div class="move box2">{{pcurve.y5|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">6Y</div> <div class="move box2">{{pcurve.y6|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">7Y</div> <div class="move box2">{{pcurve.y7|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">8Y</div> <div class="move box2">{{pcurve.y8|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">9Y</div> <div class="move box2">{{pcurve.y9|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">10Y</div> <div class="move box2">{{pcurve.y10|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">12Y</div> <div class="move box2">{{pcurve.y12|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">15Y</div> <div class="move box2">{{pcurve.y15|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">20Y</div> <div class="move box2">{{pcurve.y20|floatformat:2}}</div></div>
+        </div>
+        <div class="box1"> </div>
+        <div class="box1 cent"><h3>EUR ({{ecurve.date|date:'Y-m-d'}})</h3>
+            <div class="container"> <div class="box1">1M</div> <div class="move box2">{{ecurve.m1|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">3M</div> <div class="move box2">{{ecurve.m3|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">6M</div> <div class="move box2">{{ecurve.m6|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">1Y</div> <div class="move box2">{{ecurve.y1|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">2Y</div> <div class="move box2">{{ecurve.y2|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">3Y</div> <div class="move box2">{{ecurve.y3|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">4Y</div> <div class="move box2">{{ecurve.y4|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">5Y</div> <div class="move box2">{{ecurve.y5|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">6Y</div> <div class="move box2">{{ecurve.y6|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">7Y</div> <div class="move box2">{{ecurve.y7|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">8Y</div> <div class="move box2">{{ecurve.y8|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">9Y</div> <div class="move box2">{{ecurve.y9|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">10Y</div> <div class="move box2">{{ecurve.y10|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">12Y</div> <div class="move box2">{{ecurve.y12|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">15Y</div> <div class="move box2">{{ecurve.y15|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">20Y</div> <div class="move box2">{{ecurve.y20|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">30Y</div> <div class="move box2">{{ecurve.y30|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">50Y</div> <div class="move box2">{{ecurve.y50|floatformat:2}}</div></div>
+        </div>
+        <div class="box1"> </div>
+        <div class="box1 cent"><h3>USD ({{ucurve.date|date:'Y-m-d'}})</h3>
+            <div class="container"> <div class="box1">1M</div> <div class="move box2">{{ucurve.m1|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">3M</div> <div class="move box2">{{ucurve.m3|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">6M</div> <div class="move box2">{{ucurve.m6|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">1Y</div> <div class="move box2">{{ucurve.y1|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">2Y</div> <div class="move box2">{{ucurve.y2|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">3Y</div> <div class="move box2">{{ucurve.y3|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">4Y</div> <div class="move box2">{{ucurve.y4|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">5Y</div> <div class="move box2">{{ucurve.y5|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">6Y</div> <div class="move box2">{{ucurve.y6|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">7Y</div> <div class="move box2">{{ucurve.y7|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">8Y</div> <div class="move box2">{{ucurve.y8|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">9Y</div> <div class="move box2">{{ucurve.y9|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">10Y</div> <div class="move box2">{{ucurve.y10|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">12Y</div> <div class="move box2">{{ucurve.y12|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">15Y</div> <div class="move box2">{{ucurve.y15|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">20Y</div> <div class="move box2">{{ucurve.y20|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">30Y</div> <div class="move box2">{{ucurve.y30|floatformat:2}}</div></div>
+            <div class="container"> <div class="box1">50Y</div> <div class="move box2">{{ucurve.y50|floatformat:2}}</div></div>
+        </div>
+        <div class="box1"> </div>
+        
+</div> 
+
+{% endblock content %}

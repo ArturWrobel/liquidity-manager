@@ -1,0 +1,52 @@
+<style>
+        .highlight {
+            font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            color: rgb(240, 96, 13);
+            }
+</style>
+
+{% load humanize %}
+    {{ floatvalue|floatformat:2|intcomma }}
+
+Found: {{ deals|length }}
+<br/>
+<br/>
+<div class = "row" >
+        <div class = "col" style="float: left; width: 5%">No.</div>
+        <div class = "col" style="float: left; width: 12%; text-align: center"> deal date </div>
+        <div class = "col" style="float: left; width: 12%; text-align: center"> value date</div>
+</div>
+<br>
+{% for deal in deals %}
+<a class = "zzz" href="/updatedeal/{{ deal.deal_number }}">
+<div class = "row" >
+    <div class = "col" style="float: left; width: 5%">{{ deal.deal_number }}. </div>
+    <div class = "col" style="float: left; width: 12%; text-align: center">{{deal.deal_date|date:'Y-m-d'}}</div>
+    <div class = "col" style="float: left; width: 12%; text-align: center">{{deal.value_date|date:'Y-m-d'}}</div>
+    <div class = "col" style="color:rgb(32, 75, 214) ; float: left; width: 10%"> {{deal.counterparty}} </div>
+    <div class = "col" style="float: left; width: 10%; text-align: center">{{deal.deal_kind}}</div>
+    <div class = "col" style="float: left; width: 10%; text-align: center"> 
+                                                        {% if deal.currency_base is not None %}
+                                                        {{deal.currency_base}}
+                                                        {% else %}
+                                                        {{deal.currency_cross}}
+                                                        {% endif %}
+    </div>
+    <div class = "col" style="float: left; width: 15%; text-align: right">{{deal.amount_in_base_cur|floatformat:2}}</div>
+    <div class = "col" style="float: left; width: 10%; text-align: center">{{deal.frontoffice}}</div>
+
+    
+</div> 
+</a>
+<br>
+{% endfor %}
+
+<script>
+        $('a.zzz').hover(
+        function() {
+            $(this).addClass('highlight');
+        }, function() {
+            $(this).removeClass('highlight');
+        })
+       
+</script>
