@@ -1,4 +1,6 @@
 {
     "python.formatting.provider": "black",
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "python.linting.enabled": true,
+    "python.pythonPath": "C:\\Users\\ARW\\AppData\\Local\\Programs\\Python\\Python37\\python.exe"
 }

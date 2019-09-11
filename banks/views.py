@@ -70,20 +70,50 @@ class Account(LoginRequiredMixin, View):
 
     def get(self, request, bank_acc):
         acc = bank_acc
+        daysrange = 7
         salda = (
             Account.pick_bank(bank_acc)
             .objects.filter(
                 date__range=[
                     str(Account.start_date),
-                    str(Account.start_date + timedelta(days=30)),
+                    str(Account.start_date + timedelta(days=daysrange)),
                 ]
             )
             .order_by("pk")
         )
 
-        recalculate(str(Account.start_date), bank_acc, 30)
+        ostatni = Account.pick_bank(bank_acc).objects.filter(reconciled = "YES").last()
+        first_date = ostatni.date + timedelta(days=1)
+        start_balance = ostatni.end_balance
 
-        out = {"salda": salda, "title": acc}
+        a = Account.pick_bank(bank_acc).objects.get(date = first_date)
+        end_balance = start_balance + a.result
+
+        delta_x = Account.start_date - first_date
+        x = int(delta_x.days)
+
+        suma = start_balance
+        fromto = Account.pick_bank(bank_acc).objects.filter(date__range=[str(first_date), str(Account.start_date + timedelta(days=daysrange))])
+        balances = [start_balance]
+
+        for i in range (x + daysrange):
+            suma += fromto[i].result
+            balances.append(suma)
+
+        start_balances = balances[4:]     
+        end_balances = balances[5:]
+
+        print("----------------------------------------------------------------------------------------------------------------")      
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", ostatni.end_balance, start_balance, a.result, end_balance, first_date)
+        print("na date", Account.start_date, "end balance wynosi", suma)
+        print(start_balances, end_balances)
+        print("----------------------------------------------------------------------------------------------------------------")
+
+
+
+        #recalculate(str(Account.start_date), bank_acc, 30)
+
+        out = {"sbalances": start_balances,"salda": salda, "title": acc}
         return render(request, "account.html", out)
 
     def post(self, request, bank_acc):
@@ -91,23 +121,23 @@ class Account(LoginRequiredMixin, View):
 
         if request.POST.get("ok") == "week up":
             Account.start_date = Account.start_date - timedelta(days=7)
-            recalculate(str(Account.start_date), bank_acc, 30)
+            #recalculate(str(Account.start_date), bank_acc, 30)
 
         elif request.POST.get("ok") == "week down":
             Account.start_date = Account.start_date + timedelta(days=7)
-            recalculate(str(Account.start_date), bank_acc, 30)
+            #recalculate(str(Account.start_date), bank_acc, 30)
 
         elif request.POST.get("ok") == "month up":
             Account.start_date = Account.start_date - timedelta(days=30)
-            recalculate(str(Account.start_date), bank_acc, 30)
+            #recalculate(str(Account.start_date), bank_acc, 30)
 
         elif request.POST.get("ok") == "month down":
             Account.start_date = Account.start_date + timedelta(days=30)
-            recalculate(str(Account.start_date), bank_acc, 30)
+            #recalculate(str(Account.start_date), bank_acc, 30)
 
         elif request.POST.get("ok") == "today":
             Account.start_date = date.today()
-            recalculate(str(Account.start_date), bank_acc, 30)
+            #recalculate(str(Account.start_date), bank_acc, 30)
 
         elif request.POST.get("ok") == "chart":
 

@@ -1,6 +1,7 @@
 from datetime import timedelta
 from django.db import models
 
+YES_NO = (("YES", "YES"), ("NO", "NO"))
 
 class Citi(models.Model):
     date = models.DateField(primary_key=True)
@@ -13,6 +14,7 @@ class Citi(models.Model):
     depo = models.FloatField(default=0)
     interest = models.FloatField(default=0)
     reconciliation = models.FloatField(default=0)
+    reconciled = models.CharField(choices=YES_NO, max_length=3, default = "NO")
 
     @property
     def result(self):
@@ -41,6 +43,7 @@ class mBank(models.Model):
     depo = models.FloatField(default=0)
     interest = models.FloatField(default=0)
     reconciliation = models.FloatField(default=0)
+    reconciled = models.CharField(choices=YES_NO, max_length=3, default = "NO")
 
     @property
     def result(self):
@@ -69,6 +72,7 @@ class Societe(models.Model):
     depo = models.FloatField(default=0)
     interest = models.FloatField(default=0)
     reconciliation = models.FloatField(default=0)
+    reconciled = models.CharField(choices=YES_NO, max_length=3, default = "NO")
 
     @property
     def result(self):
@@ -97,6 +101,7 @@ class Santander(models.Model):
     depo = models.FloatField(default=0)
     interest = models.FloatField(default=0)
     reconciliation = models.FloatField(default=0)
+    reconciled = models.CharField(choices=YES_NO, max_length=3, default = "NO")
 
     @property
     def result(self):
