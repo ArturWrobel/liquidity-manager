@@ -70,7 +70,7 @@ class Account(LoginRequiredMixin, View):
 
     def get(self, request, bank_acc):
         acc = bank_acc
-        daysrange = 7
+        daysrange = 60
         salda = (
             Account.pick_bank(bank_acc)
             .objects.filter(
@@ -82,9 +82,10 @@ class Account(LoginRequiredMixin, View):
             .order_by("pk")
         )
 
-        ostatni = Account.pick_bank(bank_acc).objects.filter(reconciled = "YES").last()
-        first_date = ostatni.date + timedelta(days=1)
-        start_balance = ostatni.end_balance
+        
+        '''lastreconciled = Account.pick_bank(bank_acc).objects.filter(reconciled = "YES").last()
+        first_date = lastreconciled.date + timedelta(days=1)
+        start_balance = lastreconciled.end_balance
 
         a = Account.pick_bank(bank_acc).objects.get(date = first_date)
         end_balance = start_balance + a.result
@@ -96,24 +97,29 @@ class Account(LoginRequiredMixin, View):
         fromto = Account.pick_bank(bank_acc).objects.filter(date__range=[str(first_date), str(Account.start_date + timedelta(days=daysrange))])
         balances = [start_balance]
 
-        for i in range (x + daysrange):
+        for i in range (x + 1 + daysrange):
             suma += fromto[i].result
             balances.append(suma)
 
-        start_balances = balances[4:]     
+        start_balances = balances[4:-1]     
         end_balances = balances[5:]
+        all = list(zip(start_balances,end_balances, salda))
 
         print("----------------------------------------------------------------------------------------------------------------")      
-        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", ostatni.end_balance, start_balance, a.result, end_balance, first_date)
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", start_balance, a.result, end_balance, first_date, x)
         print("na date", Account.start_date, "end balance wynosi", suma)
         print(start_balances, end_balances)
         print("----------------------------------------------------------------------------------------------------------------")
-
-
+        print("----------------------------------------------------------------------------------------------------------------")
+        print("----------------------------------------------------------------------------------------------------------------")
+        print(all)
+        print("----------------------------------------------------------------------------------------------------------------")
+        print("----------------------------------------------------------------------------------------------------------------")
+            '''
 
         #recalculate(str(Account.start_date), bank_acc, 30)
 
-        out = {"sbalances": start_balances,"salda": salda, "title": acc}
+        out = {"salda": salda, "title": acc}
         return render(request, "account.html", out)
 
     def post(self, request, bank_acc):
@@ -143,6 +149,8 @@ class Account(LoginRequiredMixin, View):
 
             return redirect("/chart2/{}".format(bank_acc))
 
+        '''daysrange = 60'''
+
         salda = (
             Account.pick_bank(bank_acc)
             .objects.filter(
@@ -153,6 +161,28 @@ class Account(LoginRequiredMixin, View):
             )
             .order_by("pk")
         )
+
+        '''lastreconciled = Account.pick_bank(bank_acc).objects.filter(reconciled = "YES").last()
+        first_date = lastreconciled.date + timedelta(days=1)
+        start_balance = lastreconciled.end_balance
+
+        a = Account.pick_bank(bank_acc).objects.get(date = first_date)
+        end_balance = start_balance + a.result
+
+        delta_x = Account.start_date - first_date
+        x = int(delta_x.days)
+
+        suma = start_balance
+        fromto = Account.pick_bank(bank_acc).objects.filter(date__range=[str(first_date), str(Account.start_date + timedelta(days=daysrange))])
+        balances = [start_balance]
+
+        for i in range (x + 1 + daysrange):
+            suma += fromto[i].result
+            balances.append(suma)
+
+        start_balances = balances[x:-1]     
+        end_balances = balances[x+1:]
+        all = list(zip(start_balances,end_balances, salda))'''
 
         out = {"salda": salda, "title": acc}
         return render(request, "account.html", out)
@@ -166,7 +196,7 @@ def update_view(request, bank_acc, date):
 
     if form.is_valid():
         form.save()
-        recalculate(date, bank_acc, 365)
+        #recalculate(date, bank_acc, 365)
         return redirect("/bank_acc/{}".format(bank_acc))
 
     context = {"form": form, "obj": obj}

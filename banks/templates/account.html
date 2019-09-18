@@ -58,7 +58,7 @@
                 <a href="/update/{{ title }}/{{ i.date|date:'Y-m-d' }}">{{ i.date|date:'Y-m-d' }}</a>
             </th>
 
-            <th>{{ sbalance|floatformat:2|intcomma }}</th>
+            <th>{{ i.start_balance|floatformat:2|intcomma }}</th>
             <th>{{ i.end_balance|floatformat:2|intcomma }}</th>
             <th>{{ i.inflows|floatformat:2|intcomma }}</th>
             <th>{{ i.outflows|floatformat:2|intcomma }}</th>
