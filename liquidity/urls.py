@@ -17,7 +17,7 @@ urlpatterns = [
     path('txfr/', TransferDeal.as_view()),
     path('dealsearch/', DealSearch.as_view(), name = 'search'),
     path('dealsearch_id/', DealSearchId.as_view(), name = 'search_id'),
-    path('dealsfilter/', dealsfilter),
+    path('dealsfilter/', dealsfilter, name = 'deal-search'),
     path('dataimport/', DataImport.as_view(), name = 'data-import'),
     path('marketdataimport/', MarketDataImport.as_view(), name = 'market-data-import'),
     path('upload/', upload, name = 'upload'),

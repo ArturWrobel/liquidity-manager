@@ -40,6 +40,7 @@
         <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content">
+        <a href="/dealsfilter">Deals search</a>
         <a href="/dealsearch">Deals search</a>
         <a href="/dealsearch_id">Deals search by number</a>
         <a href="#">Limits</a>
@@ -82,12 +83,12 @@
     <a href="#news">About</a>
     <a href="/logout">Logout</a>
 
-    <b>{{ title }}</b>
+    <b id = "title">{{ title }}</b>
 
   </div>
 
   <div class="footer">
-    <p>{{ user.first_name }}</p>
+    <p>Logged User: <span id="name">{{ user.first_name }} {{ user.last_name }}</span> </p>
   </div>
 
 </body>

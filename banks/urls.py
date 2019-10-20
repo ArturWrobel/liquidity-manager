@@ -6,12 +6,10 @@ from django.conf import settings
 from banks.views import *
 
 urlpatterns = [
-    path('graph/', graph, name = 'graph'),
-    path('graph1/', graph1, name = 'graph1'),
-    
-
+    path("graph/", graph, name="graph"),
+    path("graph1/", graph1, name="graph1"),
 ]
 
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

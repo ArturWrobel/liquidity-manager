@@ -1,16 +1,11 @@
+{% extends 'base.html' %}
 {% load static %}
 
-<!doctype html>
-<html lang="en">
+{% block content %}
 
-<head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <title>{{ title }}</title>
-</head>
+<title>{{ title }}</title>
 
-<body>
-    {% include 'navbar.html' %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">    
     
     <h1> Welcome {{user.first_name}}!!! </h1>
     
@@ -29,9 +24,8 @@
                   {duration: 2000});
             });
     </script> 
-    <script src="{% static 'js/app.js' %}"></script>
 
-</body>
+{% endblock %}
 
-</html>
+
 

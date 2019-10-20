@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
 from django.contrib.auth.models import User
+from tempus_dominus.widgets import DatePicker, DateTimePicker
 
 DEAL_KIND = (("DEPO", "DEPO"), ("TXFR", "TXFR"), ("FX", "FX"))
 
@@ -119,6 +120,7 @@ class EditTransferForm(forms.ModelForm):
 
 
 class DepoForm(forms.ModelForm):
+    
     class Meta:
         model = Deals
         fields = [

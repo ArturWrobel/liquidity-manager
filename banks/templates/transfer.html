@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/ticket.css' %}">
+<script src="{% static 'js/app.js' %}"></script>
 
 <form action="" method="post">
   {% csrf_token %}

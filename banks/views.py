@@ -374,7 +374,7 @@ class SpotDeal(LoginRequiredMixin, View):
 
         username = request.user.username
         time = datetime.now()
-
+    
         if form.is_valid():
             dd = form.cleaned_data["deal_date"]
             vd = form.cleaned_data["value_date"]
@@ -619,13 +619,14 @@ def dealsfilter(request):
 
     deals_list = Deals.objects.all().order_by("deal_number")
     deals_filter = DealsFilter(request.GET, queryset=deals_list)
+    title = "Deal search page"
 
     if request.GET.get("view_type") == "ajax":
 
-        ctx = {"filter": deals_filter}
+        ctx = {"filter": deals_filter, "title": title}
         return render(request, "one_search_clean.html", ctx)
 
-    return render(request, "dealsfilter.html", {"filter": deals_filter})
+    return render(request, "dealsfilter.html", {"filter": deals_filter, "title": title})
 
 
 @login_required(login_url="/login/")
