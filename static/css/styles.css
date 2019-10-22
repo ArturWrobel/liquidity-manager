@@ -34,7 +34,7 @@ body {
   top: 8px;
   width: 99%;
   overflow: hidden;
-  background-color: #b60000;
+  background-color: #870000;
   z-index: 1;
   line-height: 21px;
   border-radius: 5px;
@@ -127,7 +127,7 @@ body {
   left: 0;
   bottom: 0;
   width: 100%;
-  background-color: #b60000;
+  background-color: #870000;
   color: white;
   text-align: center;
   font-size: 10px;

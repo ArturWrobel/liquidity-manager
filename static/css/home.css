@@ -1,7 +1,6 @@
 #homelogo {
     position: relative;
-    height: 10%; 
-    width: 10%; 
-    margin-top: 30vh; 
+    margin: auto;
+    top: 25vh; 
     opacity: 0.05;
   }

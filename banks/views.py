@@ -82,8 +82,7 @@ class Account(LoginRequiredMixin, View):
             .order_by("pk")
         )
 
-        
-        '''lastreconciled = Account.pick_bank(bank_acc).objects.filter(reconciled = "YES").last()
+        """lastreconciled = Account.pick_bank(bank_acc).objects.filter(reconciled = "YES").last()
         first_date = lastreconciled.date + timedelta(days=1)
         start_balance = lastreconciled.end_balance
 
@@ -115,9 +114,9 @@ class Account(LoginRequiredMixin, View):
         print(all)
         print("----------------------------------------------------------------------------------------------------------------")
         print("----------------------------------------------------------------------------------------------------------------")
-            '''
+            """
 
-        #recalculate(str(Account.start_date), bank_acc, 30)
+        # recalculate(str(Account.start_date), bank_acc, 30)
 
         out = {"salda": salda, "title": acc}
         return render(request, "account.html", out)
@@ -127,29 +126,29 @@ class Account(LoginRequiredMixin, View):
 
         if request.POST.get("ok") == "week up":
             Account.start_date = Account.start_date - timedelta(days=7)
-            #recalculate(str(Account.start_date), bank_acc, 30)
+            # recalculate(str(Account.start_date), bank_acc, 30)
 
         elif request.POST.get("ok") == "week down":
             Account.start_date = Account.start_date + timedelta(days=7)
-            #recalculate(str(Account.start_date), bank_acc, 30)
+            # recalculate(str(Account.start_date), bank_acc, 30)
 
         elif request.POST.get("ok") == "month up":
             Account.start_date = Account.start_date - timedelta(days=30)
-            #recalculate(str(Account.start_date), bank_acc, 30)
+            # recalculate(str(Account.start_date), bank_acc, 30)
 
         elif request.POST.get("ok") == "month down":
             Account.start_date = Account.start_date + timedelta(days=30)
-            #recalculate(str(Account.start_date), bank_acc, 30)
+            # recalculate(str(Account.start_date), bank_acc, 30)
 
         elif request.POST.get("ok") == "today":
             Account.start_date = date.today()
-            #recalculate(str(Account.start_date), bank_acc, 30)
+            # recalculate(str(Account.start_date), bank_acc, 30)
 
         elif request.POST.get("ok") == "chart":
 
             return redirect("/chart2/{}".format(bank_acc))
 
-        '''daysrange = 60'''
+        """daysrange = 60"""
 
         salda = (
             Account.pick_bank(bank_acc)
@@ -162,7 +161,7 @@ class Account(LoginRequiredMixin, View):
             .order_by("pk")
         )
 
-        '''lastreconciled = Account.pick_bank(bank_acc).objects.filter(reconciled = "YES").last()
+        """lastreconciled = Account.pick_bank(bank_acc).objects.filter(reconciled = "YES").last()
         first_date = lastreconciled.date + timedelta(days=1)
         start_balance = lastreconciled.end_balance
 
@@ -182,7 +181,7 @@ class Account(LoginRequiredMixin, View):
 
         start_balances = balances[x:-1]     
         end_balances = balances[x+1:]
-        all = list(zip(start_balances,end_balances, salda))'''
+        all = list(zip(start_balances,end_balances, salda))"""
 
         out = {"salda": salda, "title": acc}
         return render(request, "account.html", out)
@@ -196,7 +195,7 @@ def update_view(request, bank_acc, date):
 
     if form.is_valid():
         form.save()
-        #recalculate(date, bank_acc, 365)
+        # recalculate(date, bank_acc, 365)
         return redirect("/bank_acc/{}".format(bank_acc))
 
     context = {"form": form, "obj": obj}
@@ -374,7 +373,7 @@ class SpotDeal(LoginRequiredMixin, View):
 
         username = request.user.username
         time = datetime.now()
-    
+
         if form.is_valid():
             dd = form.cleaned_data["deal_date"]
             vd = form.cleaned_data["value_date"]

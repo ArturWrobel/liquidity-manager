@@ -4,7 +4,7 @@ form {
     position: absolute;
     margin-left: 25%;
     top: 25%;
-    border: 5px solid #f1f1f1;
+    border: 3px solid lightgray;
     background: rgba(240, 166, 132, 0.8);
   border-radius: 30px;
   box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5);
