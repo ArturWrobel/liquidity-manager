@@ -45,15 +45,15 @@
             <a href="/update/{{ title }}/{{ i.date|date:'Y-m-d' }}">{{ i.date|date:'Y-m-d' }}</a>
         </th>
 
-        <th>{{ i.start_balance|floatformat:2|intcomma }}</th>
-        <th>{{ i.end_balance|floatformat:2|intcomma }}</th>
-        <th>{{ i.inflows|floatformat:2|intcomma }}</th>
-        <th>{{ i.outflows|floatformat:2|intcomma }}</th>
-        <th>{{ i.transfer_in|floatformat:2|intcomma }}</th>
-        <th>{{ i.transfer_out|floatformat:2|intcomma }}</th>
-        <th>{{ i.depo|floatformat:2|intcomma }}</th>
-        <th>{{ i.interest|floatformat:2|intcomma }}</th>
-        <th>{{ i.reconciliation|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ i.start_balance|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ i.end_balance|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ i.inflows|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ i.outflows|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ i.transfer_in|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ i.transfer_out|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ i.depo|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ i.interest|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ i.reconciliation|floatformat:2|intcomma }}</th>
     </tr>
 
     {% endfor %}

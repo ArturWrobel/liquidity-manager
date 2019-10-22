@@ -8,9 +8,15 @@
 </head>
 
 <body>
+    <div class="navbar">
+    <div id="logo">
+      <img  src="{% static "img/orange logo.jpg" %}" alt="Orange logo" width="33px">
+    </div>
 
-  <div class="navbar">
-    <a href="/home">Home</a>
+    <div>
+        <a href="/home">Home</a>
+    </div>
+    
     <div class="dropdown">
       <button class="dropbtn" style="font-weight:bold">Accounts
         <i class="fa fa-caret-down"></i>
@@ -88,7 +94,8 @@
   </div>
 
   <div class="footer">
-    <p>Logged User: <span id="name">{{ user.first_name }} {{ user.last_name }}</span> </p>
+    <p id="left">Logged User: <span id="name">{{ user.first_name }} {{ user.last_name }}</span> </p>
+    <p id="right">&copy; Copyright 2019 ARW</p>
   </div>
 
 </body>

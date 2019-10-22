@@ -14,7 +14,7 @@ table tr:nth-child(even) th {
 }
 
 table {
-  margin-top: 60px;
+  margin-top: 63px;
   width: 100%;
 }
 
@@ -23,7 +23,13 @@ th {
   font-weight: 500;
 }
 
+.numbers {
+  text-align: right;
+  padding-right: 3%;
+}
+
 .label {
+  font-size: 18px;
   font-weight: bolder;
   font-size: larger;
   border: 1px solid black;
@@ -31,21 +37,28 @@ th {
   text-decoration-style: double;
   }
 
+  .label-1 {
+    font-size: 17px;
+    font-weight: 600;
+    color: black;
+  }
+
 #form_acc {
   position: fixed;
-  border: inherit;
+  border: 2px solid #b60000;
   margin-top: 52px;
   margin-left: 25%;
-  background: grey;
+  background: #b60000;
 }
 
 .sticky {
   width: 100%;
   position: sticky;
-  top: 83px;
+  top: 86px;
 }
 
 .highlight {
-  color: rgb(17, 0, 255);
-  font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  color: rgb(236, 20, 20);
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  transition: 0.5s;
   }
