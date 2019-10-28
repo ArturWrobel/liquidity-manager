@@ -16,6 +16,8 @@
     padding: 2px 2px;
     position: relative;
     top: 60px;
+        z-index: -1;
+
 }
 
 .box1 {
@@ -24,4 +26,8 @@
 
 .cent {
     text-align: center
+}
+
+body {
+    overflow: scroll;
 }

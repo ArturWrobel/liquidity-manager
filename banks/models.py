@@ -143,6 +143,10 @@ COUNTERPARTY = (
     short = models.CharField(max_length=10, null=False)
     pln_acc = models.CharField(max_length=20, null=True)"""
 
+class Books (models.Model):
+    date = models.DateField(primary_key=True)
+    inflows = models.FileField(null = True, max_length=100)
+    outflows = models.FileField(null = True, max_length=100)
 
 class Deals(models.Model):
     deal_number = models.AutoField(primary_key=True)

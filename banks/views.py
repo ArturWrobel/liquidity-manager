@@ -39,6 +39,10 @@ from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models import HoverTool
 
+from django.db.models import F, Value
+from django.db.models.functions import Lag
+from django.db.models.expressions import Window
+
 
 class Start(View):
     def get(self, request):
@@ -82,7 +86,25 @@ class Account(LoginRequiredMixin, View):
             .order_by("pk")
         )
 
-        """lastreconciled = Account.pick_bank(bank_acc).objects.filter(reconciled = "YES").last()
+        bal = Account.pick_bank(bank_acc).objects.annotate (balance = Window (expression = Lag('end_balance',1), order_by = F('date').asc(),),)
+
+        print("----------------------------------------------------------------------------------------------------------------")      
+        print("----------------------------------------------------------------------------------------------------------------") 
+        print("data      :", "inf", "out", "bal(inf)", "res", "end")
+        print(bal[0].date, bal[0].inflows, bal[0].outflows, bal[0].balance, bal[0].result, 0 + bal[0].result)
+        print(bal[1].date, bal[1].inflows, bal[1].outflows, bal[1].balance, bal[1].result, -50 + bal[1].result)
+        print(bal[2].date, bal[2].inflows, bal[2].outflows, bal[2].balance, bal[2].result, bal[1].balance + bal[2].result)
+        print(bal[3].date, bal[3].inflows, bal[3].outflows, bal[3].balance, bal[3].result, bal[2].balance + bal[3].result)
+        print(bal[666].date, bal[666].inflows, bal[666].outflows, bal[666].balance, bal[666].result, bal[666].balance + bal[666].result)
+        print(bal[667].date, bal[667].inflows, bal[667].outflows, bal[667].balance, bal[667].result, bal[667].balance + bal[667].result)
+       
+
+        print("----------------------------------------------------------------------------------------------------------------")      
+        print("----------------------------------------------------------------------------------------------------------------")      
+
+
+
+        '''lastreconciled = Account.pick_bank(bank_acc).objects.filter(reconciled = "YES").last()
         first_date = lastreconciled.date + timedelta(days=1)
         start_balance = lastreconciled.end_balance
 
@@ -103,7 +125,6 @@ class Account(LoginRequiredMixin, View):
         start_balances = balances[4:-1]     
         end_balances = balances[5:]
         all = list(zip(start_balances,end_balances, salda))
-
         print("----------------------------------------------------------------------------------------------------------------")      
         print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", start_balance, a.result, end_balance, first_date, x)
         print("na date", Account.start_date, "end balance wynosi", suma)
@@ -113,8 +134,9 @@ class Account(LoginRequiredMixin, View):
         print("----------------------------------------------------------------------------------------------------------------")
         print(all)
         print("----------------------------------------------------------------------------------------------------------------")
-        print("----------------------------------------------------------------------------------------------------------------")
-            """
+        print("----------------------------------------------------------------------------------------------------------------")'''
+
+            
 
         # recalculate(str(Account.start_date), bank_acc, 30)
 
