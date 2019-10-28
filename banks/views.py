@@ -88,17 +88,18 @@ class Account(LoginRequiredMixin, View):
 
         bal = Account.pick_bank(bank_acc).objects.annotate (balance = Window (expression = Lag('end_balance',1), order_by = F('date').asc(),),)
 
+        razem = list(zip(salda, bal))
+
         print("----------------------------------------------------------------------------------------------------------------")      
         print("----------------------------------------------------------------------------------------------------------------") 
         print("data      :", "inf", "out", "bal(inf)", "res", "end")
         print(bal[0].date, bal[0].inflows, bal[0].outflows, bal[0].balance, bal[0].result, 0 + bal[0].result)
         print(bal[1].date, bal[1].inflows, bal[1].outflows, bal[1].balance, bal[1].result, -50 + bal[1].result)
-        print(bal[2].date, bal[2].inflows, bal[2].outflows, bal[2].balance, bal[2].result, bal[1].balance + bal[2].result)
-        print(bal[3].date, bal[3].inflows, bal[3].outflows, bal[3].balance, bal[3].result, bal[2].balance + bal[3].result)
-        print(bal[666].date, bal[666].inflows, bal[666].outflows, bal[666].balance, bal[666].result, bal[666].balance + bal[666].result)
-        print(bal[667].date, bal[667].inflows, bal[667].outflows, bal[667].balance, bal[667].result, bal[667].balance + bal[667].result)
-       
 
+        print(bal[665].date, bal[665].inflows, bal[665].outflows, bal[665].balance, bal[665].result, bal[665].balance + bal[665].result, bal[665].reconciled)
+        print(bal[666].date, bal[666].inflows, bal[666].outflows, bal[666].balance, bal[666].result, bal[666].balance + bal[666].result, bal[666].reconciled)
+        print(bal[667].date, bal[667].inflows, bal[667].outflows, bal[667].balance, bal[667].result, bal[666].balance + bal[667].result + bal[666].result, bal[667].reconciled)
+             
         print("----------------------------------------------------------------------------------------------------------------")      
         print("----------------------------------------------------------------------------------------------------------------")      
 
@@ -140,7 +141,7 @@ class Account(LoginRequiredMixin, View):
 
         # recalculate(str(Account.start_date), bank_acc, 30)
 
-        out = {"salda": salda, "title": acc}
+        out = {"salda": salda, "title": acc, "razem": razem}
         return render(request, "account.html", out)
 
     def post(self, request, bank_acc):

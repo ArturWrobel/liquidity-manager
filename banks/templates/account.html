@@ -38,7 +38,7 @@
         <th class="label">Reconc</th>
     </tr>
 
-    {% for i in salda %}
+    {% for i, j in razem %}
 
     <tr class="stripe_table">
         <th>
@@ -46,7 +46,12 @@
         </th>
 
         <th class="numbers">{{ i.start_balance|floatformat:2|intcomma }}</th>
-        <th class="numbers">{{ i.end_balance|floatformat:2|intcomma }}</th>
+        <th class="numbers">{% if i.reconciled == "YES" %}
+            {{i.end_balance}}
+            {% else %}
+            {{j.balance }}
+            {% endif %}
+        </th>
         <th class="numbers">{{ i.inflows|floatformat:2|intcomma }}</th>
         <th class="numbers">{{ i.outflows|floatformat:2|intcomma }}</th>
         <th class="numbers">{{ i.transfer_in|floatformat:2|intcomma }}</th>
