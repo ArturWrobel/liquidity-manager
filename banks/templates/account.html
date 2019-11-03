@@ -38,28 +38,32 @@
         <th class="label">Reconc</th>
     </tr>
 
-    {% for i, j in razem %}
-
+    {% for i, j in tog.items %}
     <tr class="stripe_table">
         <th>
-            <a href="/update/{{ title }}/{{ i.date|date:'Y-m-d' }}">{{ i.date|date:'Y-m-d' }}</a>
+            <a href="/update/{{ title }}/{{i}}">{{ i }}</a>
         </th>
 
-        <th class="numbers">{{ i.start_balance|floatformat:2|intcomma }}</th>
-        <th class="numbers">{% if i.reconciled == "YES" %}
-            {{i.end_balance}}
+        <th class="numbers">{% if j.reconciled == "YES" %}
+                {{ reco_start }}
+                {% else %}
+                {{ j.start }}
+                {% endif %}   
+        </th>
+        <th class="numbers">{% if j.reconciled == "YES" %}
+            {{ j.reco_end }}
             {% else %}
-            {{j.balance }}
+            {{ j.end }}
             {% endif %}
         </th>
-        <th class="numbers">{{ i.inflows|floatformat:2|intcomma }}</th>
-        <th class="numbers">{{ i.outflows|floatformat:2|intcomma }}</th>
-        <th class="numbers">{{ i.transfer_in|floatformat:2|intcomma }}</th>
-        <th class="numbers">{{ i.transfer_out|floatformat:2|intcomma }}</th>
-        <th class="numbers">{{ i.depo|floatformat:2|intcomma }}</th>
-        <th class="numbers">{{ i.interest|floatformat:2|intcomma }}</th>
-        <th class="numbers">{{ i.reconciliation|floatformat:2|intcomma }}</th>
-        <th class="numbers">{{ i.reconciled }}</th>
+        <th class="numbers">{{ j.inflows|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ j.outflows|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ j.transfer_in|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ j.transfer_out|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ j.depo|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ j.interest|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ j.reconciliation|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ j.reconciled }}</th>
 
     </tr>
 

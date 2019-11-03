@@ -75,37 +75,70 @@ class Account(LoginRequiredMixin, View):
     def get(self, request, bank_acc):
         acc = bank_acc
         daysrange = 60
-        salda = (
-            Account.pick_bank(bank_acc)
-            .objects.filter(
-                date__range=[
-                    str(Account.start_date),
-                    str(Account.start_date + timedelta(days=daysrange)),
-                ]
-            )
-            .order_by("pk")
+        salda = (            Account.pick_bank(bank_acc)
+            .objects.filter(date__range=[str(Account.start_date),str(Account.start_date + timedelta(days=daysrange)),]).order_by("pk"))
+
+        bal = Account.pick_bank(bank_acc).objects.annotate(balance=Window(expression=Lag("end_balance", 1), order_by=F("date").asc()))
+        first_item = Account.pick_bank(bank_acc).objects.filter()[:1].get()
+        lastreconciled = (Account.pick_bank(bank_acc).objects.filter(reconciled="YES").last())
+
+        num = (lastreconciled.pk - first_item.pk).days + 1
+
+        tog = {
+            "{}".format(lastreconciled.date + timedelta(days=1)): {
+                "start": bal[num].balance,
+                "end": bal[num].balance + bal[num].result,
+                "inflows": salda[1].inflows,
+                "outflows": salda[1].outflows,
+                "transfer_in": salda[1].transfer_in,
+                "transfer_out": salda[1].transfer_out,
+                "depo": salda[1].depo,
+                "interest": salda[1].interest,
+                "reconciliation": salda[1].reconciliation,
+                "reconciled": salda[1].reconciled,
+            }
+        }
+
+        sstart = lastreconciled.pk + timedelta(days=1)
+        eend = sstart + timedelta(days=50)
+        delta = timedelta(days=1)
+        i = 1
+        while sstart <= eend:
+            # print (sstart.strftime("%Y-%m-%d"))
+            sstart += delta
+            tog["{}".format(sstart)] = {
+                "start": tog["{}".format(sstart - timedelta(days=1))]["end"],
+                "end": tog["{}".format(sstart - timedelta(days=1))]["end"]
+                + bal[num + i].result,
+                "reco_start": salda[i+1].start_balance,
+                "reco_end": salda[i+1].end_balance,
+                "inflows": salda[i + 1].inflows,
+                "outflows": salda[i + 1].outflows,
+                "transfer_in": salda[i + 1].transfer_in,
+                "transfer_out": salda[i + 1].transfer_out,
+                "depo": salda[i + 1].depo,
+                "interest": salda[i + 1].interest,
+                "reconciliation": salda[i + 1].reconciliation,
+                "reconciliation": salda[i + 1].reconciled,
+            }
+            i += 1
+
+        print(
+            "pierwszy", salda.first(), salda[0].date, salda[0].inflows, salda[0].result
+        )
+        
+        print(
+            "----------------------------------------------------------------------------------------------------------------"
+        )
+        print(tog)
+        print(
+            "----------------------------------------------------------------------------------------------------------------"
+        )
+        print(
+            "----------------------------------------------------------------------------------------------------------------"
         )
 
-        bal = Account.pick_bank(bank_acc).objects.annotate (balance = Window (expression = Lag('end_balance',1), order_by = F('date').asc(),),)
-
-        razem = list(zip(salda, bal))
-
-        print("----------------------------------------------------------------------------------------------------------------")      
-        print("----------------------------------------------------------------------------------------------------------------") 
-        print("data      :", "inf", "out", "bal(inf)", "res", "end")
-        print(bal[0].date, bal[0].inflows, bal[0].outflows, bal[0].balance, bal[0].result, 0 + bal[0].result)
-        print(bal[1].date, bal[1].inflows, bal[1].outflows, bal[1].balance, bal[1].result, -50 + bal[1].result)
-
-        print(bal[665].date, bal[665].inflows, bal[665].outflows, bal[665].balance, bal[665].result, bal[665].balance + bal[665].result, bal[665].reconciled)
-        print(bal[666].date, bal[666].inflows, bal[666].outflows, bal[666].balance, bal[666].result, bal[666].balance + bal[666].result, bal[666].reconciled)
-        print(bal[667].date, bal[667].inflows, bal[667].outflows, bal[667].balance, bal[667].result, bal[666].balance + bal[667].result + bal[666].result, bal[667].reconciled)
-             
-        print("----------------------------------------------------------------------------------------------------------------")      
-        print("----------------------------------------------------------------------------------------------------------------")      
-
-
-
-        '''lastreconciled = Account.pick_bank(bank_acc).objects.filter(reconciled = "YES").last()
+        """lastreconciled = Account.pick_bank(bank_acc).objects.filter(reconciled = "YES").last()
         first_date = lastreconciled.date + timedelta(days=1)
         start_balance = lastreconciled.end_balance
 
@@ -135,13 +168,11 @@ class Account(LoginRequiredMixin, View):
         print("----------------------------------------------------------------------------------------------------------------")
         print(all)
         print("----------------------------------------------------------------------------------------------------------------")
-        print("----------------------------------------------------------------------------------------------------------------")'''
-
-            
+        print("----------------------------------------------------------------------------------------------------------------")"""
 
         # recalculate(str(Account.start_date), bank_acc, 30)
 
-        out = {"salda": salda, "title": acc, "razem": razem}
+        out = {"salda": salda, "title": acc, "tog": tog}
         return render(request, "account.html", out)
 
     def post(self, request, bank_acc):
