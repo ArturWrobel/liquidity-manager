@@ -60,7 +60,7 @@ class Account(LoginRequiredMixin, View):
     login_url = "/login/"
     # redirect_field_name = '/login/'
 
-    start_date = date.today()
+    start_date = date.today() - timedelta(days=1)
 
     def pick_bank(bank_acc):
         if bank_acc == "Citi":
@@ -75,32 +75,73 @@ class Account(LoginRequiredMixin, View):
     def get(self, request, bank_acc):
         acc = bank_acc
         daysrange = 60
-        salda = (            Account.pick_bank(bank_acc)
+
+        salda = (Account.pick_bank(bank_acc)
             .objects.filter(date__range=[str(Account.start_date),str(Account.start_date + timedelta(days=daysrange)),]).order_by("pk"))
+
 
         bal = Account.pick_bank(bank_acc).objects.annotate(balance=Window(expression=Lag("end_balance", 1), order_by=F("date").asc()))
         first_item = Account.pick_bank(bank_acc).objects.filter()[:1].get()
-        lastreconciled = (Account.pick_bank(bank_acc).objects.filter(reconciled="YES").last())
-
+        lastreconciled = Account.pick_bank(bank_acc).objects.filter(reconciled="YES").last()
         num = (lastreconciled.pk - first_item.pk).days + 1
+        
+        if (Account.start_date + timedelta(days=daysrange)) <= lastreconciled.date:
+            out = {"salda": salda, "title": acc}
+            print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+            print (" Jest z bazy")
+            print ((Account.start_date + timedelta(days=daysrange)),"jest mniejsze niz", lastreconciled.date)
+            print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+            return render(request, "accountrec.html", out)
+                      
+        if Account.start_date <= lastreconciled.date:
+            print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+            print (" Druga opcja")
+            print (Account.start_date ,"jest wieksze niz", lastreconciled.date)
+            print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+            tog = {
+                "{}".format(Account.start_date): {
+                    "start": salda[num].start_balance,
+                    "end": salda[num].start_balance + salda[num].result,
+                    "inflows": salda[num].inflows,
+                    "outflows": salda[num].outflows,
+                    "transfer_in": salda[num].transfer_in,
+                    "transfer_out": salda[num].transfer_out,
+                    "depo": salda[num].depo,
+                    "interest": salda[num].interest,
+                    "reconciliation": salda[num].reconciliation,
+                    "reconciled": salda[num].reconciled,
+                }
+            }
+            out = {"tog": tog, "title": acc}
+            return render(request, "account.html", out)
+
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        print (" Tylko wyliczone", num)
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        print ("Jeszcze lepiej", lastreconciled.date, Account.start_date)
+        print ((Account.start_date-lastreconciled.pk).days+1)
 
         tog = {
             "{}".format(lastreconciled.date + timedelta(days=1)): {
                 "start": bal[num].balance,
                 "end": bal[num].balance + bal[num].result,
-                "inflows": salda[1].inflows,
-                "outflows": salda[1].outflows,
-                "transfer_in": salda[1].transfer_in,
-                "transfer_out": salda[1].transfer_out,
-                "depo": salda[1].depo,
-                "interest": salda[1].interest,
-                "reconciliation": salda[1].reconciliation,
-                "reconciled": salda[1].reconciled,
+                "inflows": bal[num].inflows,
+                "outflows": bal[num].outflows,
+                "transfer_in": bal[num].transfer_in,
+                "transfer_out": bal[num].transfer_out,
+                "depo": bal[num].depo,
+                "interest": bal[num].interest,
+                "reconciliation": bal[num].reconciliation,
+                "reconciled": bal[num].reconciled,
             }
         }
 
+        salda = (Account.pick_bank(bank_acc)
+            .objects.filter(date__range=[str(lastreconciled.pk),str(Account.start_date + timedelta(days=daysrange+(Account.start_date-lastreconciled.pk).days+1)),])
+            .order_by("pk"))
+
         sstart = lastreconciled.pk + timedelta(days=1)
-        eend = sstart + timedelta(days=50)
+        eend = Account.start_date + timedelta(days=60)
         delta = timedelta(days=1)
         i = 1
         while sstart <= eend:
@@ -110,8 +151,8 @@ class Account(LoginRequiredMixin, View):
                 "start": tog["{}".format(sstart - timedelta(days=1))]["end"],
                 "end": tog["{}".format(sstart - timedelta(days=1))]["end"]
                 + bal[num + i].result,
-                "reco_start": salda[i+1].start_balance,
-                "reco_end": salda[i+1].end_balance,
+                #"reco_start": salda[i+1].start_balance,
+                #"reco_end": salda[i+1].end_balance,
                 "inflows": salda[i + 1].inflows,
                 "outflows": salda[i + 1].outflows,
                 "transfer_in": salda[i + 1].transfer_in,
@@ -123,20 +164,43 @@ class Account(LoginRequiredMixin, View):
             }
             i += 1
 
-        print(
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        print(len(tog))
+        print(tog)
+        print
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+
+        keys = ()
+        for i in range (62):
+            a = ("{}".format(Account.start_date + timedelta(days=i)),)
+            keys += a
+
+        #keys = ("{}".format(Account.start_date), "{}".format(Account.start_date+timedelta(days=1)), "{}".format(Account.start_date+timedelta(days=60)) )
+        tog = {k: tog[k] for k in keys}
+
+
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        print(len(keys))
+
+        print (" klucze", keys)
+        print (" nowy !!!", tog)
+
+        out = {"tog": tog, "title": acc}
+        return render(request, "account.html", out)
+
+        """print(
             "pierwszy", salda.first(), salda[0].date, salda[0].inflows, salda[0].result
         )
         
-        print(
-            "----------------------------------------------------------------------------------------------------------------"
-        )
+        print("----------------------------------------------------------------------------------------------------------------")
         print(tog)
-        print(
-            "----------------------------------------------------------------------------------------------------------------"
-        )
-        print(
-            "----------------------------------------------------------------------------------------------------------------"
-        )
+        print("----------------------------------------------------------------------------------------------------------------")
+        print("----------------------------------------------------------------------------------------------------------------")"""
 
         """lastreconciled = Account.pick_bank(bank_acc).objects.filter(reconciled = "YES").last()
         first_date = lastreconciled.date + timedelta(days=1)

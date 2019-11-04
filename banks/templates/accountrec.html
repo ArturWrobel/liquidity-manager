@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% include 'navbar.html' %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/account.css' %}">
+<title>Account_{{ title }}</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+{% load humanize %}
+{{ floatvalue|floatformat:2|intcomma }}
+
+<form action="#" method="POST" id="form_acc">
+    <input type="submit" name="ok" value="week up">
+    <input type="submit" name="ok" value="week down">
+    <input type="submit" name="ok" value="month up">
+    <input type="submit" name="ok" value="month down">
+    <input type="submit" name="ok" value="today">
+    <input type="submit" name="ok" value="chart">
+    {% csrf_token %}
+</form>
+<br>
+
+<table>
+
+    <tr class="sticky">
+        <th class="label">Date</th>
+        <th class="label">Start</th>
+        <th class="label">End</th>
+        <th class="label">Inflows</th>
+        <th class="label">Outflows</th>
+        <th class="label">In Txfr</th>
+        <th class="label">Out Txfr</th>
+        <th class="label">Depo</th>
+        <th class="label">Interest</th>
+        <th class="label">Reconc</th>
+    </tr>
+
+    {% for j in salda %}
+    <tr class="stripe_table">
+        <th>
+            <a href="/update/{{ title }}/{{j.date}}">{{ j.date|date:"Y-m-d" }}</a>
+        </th>
+        <th class="numbers">{{ j.start_balance|floatformat:2|intcomma }}</th>     
+        <th class="numbers">{{ j.end_balance|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ j.inflows|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ j.outflows|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ j.transfer_in|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ j.transfer_out|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ j.depo|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ j.interest|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ j.reconciliation|floatformat:2|intcomma }}</th>
+        <th class="numbers">{{ j.reconciled }}</th>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+
+<script>
+    $('.stripe_table').hover(
+        function () {
+            $(this).addClass('highlight');
+        },
+        function () {
+            $(this).removeClass('highlight');
+        })
+</script>
+
+{% endblock %}
