@@ -3,6 +3,7 @@ from django.db import models
 
 YES_NO = (("YES", "YES"), ("NO", "NO"))
 
+
 class Citi(models.Model):
     date = models.DateField(primary_key=True)
     start_balance = models.FloatField(default=0)
@@ -14,7 +15,7 @@ class Citi(models.Model):
     depo = models.FloatField(default=0)
     interest = models.FloatField(default=0)
     reconciliation = models.FloatField(default=0)
-    reconciled = models.CharField(choices=YES_NO, max_length=3, default = "NO")
+    reconciled = models.CharField(choices=YES_NO, max_length=3, default="NO")
 
     @property
     def result(self):
@@ -43,7 +44,7 @@ class mBank(models.Model):
     depo = models.FloatField(default=0)
     interest = models.FloatField(default=0)
     reconciliation = models.FloatField(default=0)
-    reconciled = models.CharField(choices=YES_NO, max_length=3, default = "NO")
+    reconciled = models.CharField(choices=YES_NO, max_length=3, default="NO")
 
     @property
     def result(self):
@@ -72,7 +73,7 @@ class Societe(models.Model):
     depo = models.FloatField(default=0)
     interest = models.FloatField(default=0)
     reconciliation = models.FloatField(default=0)
-    reconciled = models.CharField(choices=YES_NO, max_length=3, default = "NO")
+    reconciled = models.CharField(choices=YES_NO, max_length=3, default="NO")
 
     @property
     def result(self):
@@ -101,7 +102,7 @@ class Santander(models.Model):
     depo = models.FloatField(default=0)
     interest = models.FloatField(default=0)
     reconciliation = models.FloatField(default=0)
-    reconciled = models.CharField(choices=YES_NO, max_length=3, default = "NO")
+    reconciled = models.CharField(choices=YES_NO, max_length=3, default="NO")
 
     @property
     def result(self):
@@ -143,10 +144,12 @@ COUNTERPARTY = (
     short = models.CharField(max_length=10, null=False)
     pln_acc = models.CharField(max_length=20, null=True)"""
 
-class Books (models.Model):
+
+class Books(models.Model):
     date = models.DateField(primary_key=True)
-    inflows = models.FileField(null = True, max_length=100)
-    outflows = models.FileField(null = True, max_length=100)
+    inflows = models.FileField(null=True, max_length=100)
+    outflows = models.FileField(null=True, max_length=100)
+
 
 class Deals(models.Model):
     deal_number = models.AutoField(primary_key=True)

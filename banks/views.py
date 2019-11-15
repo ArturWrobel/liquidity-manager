@@ -798,14 +798,24 @@ class DataImport(LoginRequiredMixin, View):
         so = data.sheet_by_index(2)
         sa = data.sheet_by_index(3)
 
-        i = 0
-        for row in range(ci.nrows - 1):
-            dat = date.today() + timedelta(days=i)
-            flows_ci = Citi.objects.get(date="{}".format(dat))
-            flows_ci.inflows = ci.cell_value(row + 1, 1)
-            flows_ci.outflows = ci.cell_value(row + 1, 2)
-            flows_ci.save()
-            i += 1
+        all = [[ci, Citi],[mb, mBank],[so, Societe],[sa, Santander]]
+
+        j = 0
+        for j in range(len(all)):
+            i = 0
+            for row in range((all[j][0]).nrows - 1):
+                first_date =  xlrd.xldate_as_tuple((all[j][0]).cell_value(1,0), data.datemode)
+                first_date = datetime(first_date[0], first_date[1], first_date[2])
+                first_date = first_date.date()
+                # format first_date: tuple => datetime => date
+
+                dat = first_date + timedelta(days=i)
+                flows = all[j][1].objects.get(date="{}".format(dat))
+                flows.inflows = all[j][0].cell_value(row + 1, 1)
+                flows.outflows = all[j][0].cell_value(row + 1, 2)
+                flows.save()
+                i += 1
+            j += 1
 
         # recalculate(str(date.today()), Citi, 365) /// do zastanowienia
 
@@ -830,9 +840,7 @@ class LoginView(View):
 
     def post(self, request):
         form = LoginForm(request.POST)
-        user = authenticate(
-            username=request.POST["username"], password=request.POST["password"]
-        )
+        user = authenticate(username=request.POST["username"], password=request.POST["password"])
 
         if user is not None:
             if user.is_active:
@@ -899,7 +907,6 @@ class YieldCurves(LoginRequiredMixin, View):
 
 class MarketDataImport(LoginRequiredMixin, View):
     login_url = "/accounts/login/"
-    
 
     def get(self, request):
         file_location = "C:/Users/ARW/Dev/Liquidity/src/media/market_data.xlsx"
