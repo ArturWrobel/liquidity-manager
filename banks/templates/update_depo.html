@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
+
+<link rel="stylesheet" href="{% static 'css/ticket.css' %}">
+<script src="{% static 'js/app.js' %}"></script>
 
 {% load humanize %}
     {{ floatvalue|floatformat:2|intcomma }}
@@ -17,10 +21,9 @@
     </div>
   {% endfor %}
 <br>
-<input class = "textWrapper" type="submit" value="Save"/>
+<input class = "textWrapper button_form" type="submit" value="Save"/>
 <br>
 <br>
 </form>
-
 
 {% endblock %}

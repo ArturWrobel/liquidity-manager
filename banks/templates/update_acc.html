@@ -1,26 +1,32 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
 {% load humanize %}
-    {{ floatvalue|floatformat:2|intcomma }}
+{{ floatvalue|floatformat:2|intcomma }}
+
+<link rel="stylesheet" href="{% static 'css/ticket.css' %}">
+<script src="{% static 'js/app.js' %}"></script>
 
 <form method="POST"> {% csrf_token %}
-<p class = "textWrapper">Date: {{ obj.date|date:'Y-m-d' }}</p>
-<p class = "textWrapper">Start: {{ obj.start_balance|floatformat:2 }}</p>
-<p class = "textWrapper">End: {{ obj.end_balance|floatformat:2 }}</p>
-    <hr>
-{% for field in form %}
-    <div class="textWrapper">
-      <br>
-      {{field.label_tag}} {{field}}
+  <h2 id = "ticket_center">Value date details</h2>
+  <hr>
+  <p class="textWrapper">Date: {{ obj.date|date:'Y-m-d' }}</p>
+  <p class="textWrapper">Start: {{ obj.start_balance|floatformat:2 }}</p>
+  <p class="textWrapper">End: {{ obj.end_balance|floatformat:2 }}</p>
+  <hr>
+  {% for field in form %}
+  <div class="textWrapper">
+    <br>
+    {{field.label_tag}} <span class="left">{{field}}</span>
 
-    </div>
+  </div>
   {% endfor %}
-<br>
-<input class = "textWrapper" type="submit" value="Save"/>
-<br>
-<br>
+  <br>
+  <input class="textWrapper button_form" type="submit" value="Save" />
+  <br>
+  <br>
 </form>
 
 

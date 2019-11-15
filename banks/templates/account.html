@@ -45,15 +45,15 @@
         </th>
 
         <th class="numbers">{% if j.reconciled == "YES" %}
-                {{ reco_start }}
+                {{ reco_start|floatformat:2|intcomma }}
                 {% else %}
-                {{ j.start }}
+                {{ j.start|floatformat:2|intcomma }}
                 {% endif %}   
         </th>
         <th class="numbers">{% if j.reconciled == "YES" %}
-            {{ j.reco_end }}
+            {{ j.reco_end|floatformat:2|intcomma }}
             {% else %}
-            {{ j.end }}
+            {{ j.end|floatformat:2|intcomma }}
             {% endif %}
         </th>
         <th class="numbers">{{ j.inflows|floatformat:2|intcomma }}</th>
@@ -63,8 +63,6 @@
         <th class="numbers">{{ j.depo|floatformat:2|intcomma }}</th>
         <th class="numbers">{{ j.interest|floatformat:2|intcomma }}</th>
         <th class="numbers">{{ j.reconciliation|floatformat:2|intcomma }}</th>
-        <th class="numbers">{{ j.reconciled }}</th>
-
     </tr>
 
     {% endfor %}

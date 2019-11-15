@@ -1,0 +1,58 @@
+.text {
+    font-weight: 600;
+    font-size: 20px
+}
+
+.center {
+    text-align: center;
+  }
+
+form {
+    min-height: 30%;
+    font-weight: 600;
+    font-size: 16px;
+    width: 30%;
+    position: absolute;
+    left: 35%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 3px solid #870000;
+    background: rgba(240, 166, 132, 0.8);
+    border-radius: 30px;
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5);
+  }
+
+  .button_form {
+    padding: 10px 15px;
+    font-weight: 700;
+    border-radius: 5px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .textWrapper {
+    margin-left: 10%;
+  }
+
+    #id_login,
+    #id_password,
+    #id_password1,
+    #id_password2,
+    #id_username,
+    #id_email
+     {
+    position: fixed;
+    left: 35%;
+    width: 50%;
+    padding: 6px 20px;
+    border-radius: 5px; 
+}
+
+img.avatar {
+    width: 10%;
+  }
+
+.imgcontainer {
+    text-align: center;
+    margin: 24px 0 12px 0;
+  }

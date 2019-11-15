@@ -26,7 +26,17 @@
     <script>
 
     $( function() {
-      $( "#id_deal_date, #id_value_date, #id_expiry_date, #id_start_date, #id_end_date, #id_deal_date__gte, #id_deal_date__lte, #id_value_date__gte,#id_value_date__lte" ).datepicker();
+      $( "#id_deal_date, #id_value_date, #id_expiry_date, #id_start_date, #id_end_date, #id_deal_date__gte, #id_deal_date__lte, #id_value_date__gte,#id_value_date__lte" )
+      .datepicker().attr("placeholder", "DD/MM/YYYY");
+    } );
+    $( function() {
+      $( "#id_interest_rate" ).attr("placeholder", "XX.xx %");
+    } );
+    $( function() {
+      $( "#id_amount_in_base_cur,#id_amount_in_side_cur" ).attr("placeholder", "input amount");
+    } );
+    $( function() {
+      $( "#id_exchange_rate" ).attr("placeholder", "FX rate");
     } );
     </script>
         

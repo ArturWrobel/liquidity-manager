@@ -6,17 +6,68 @@
   text-align: center;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance:textfield;
+}
+
 #id_deal_date,
 #id_value_date,
 #id_expiry_date {
-  width: 70%;
-  padding: 8px 20px
+  position: fixed;
+  width: 20%;
+  left: 30%;
+  padding: 6px 20px;
+  border-radius: 5px;
+}
+
+#id_counterparty,
+#id_currency_base,
+#id_counterparty_another,
+#id_amount_in_base_cur,
+#id_amount_in_side_cur,
+#id_interest_rate,
+#id_currency_cross,
+#id_side,
+#id_exchange_rate,
+#id_deal_kind,
+#id_frontoffice,
+#id_ordering {
+  position: fixed;
+  width: 10%;
+  left: 30%;
+  padding: 6px 20px;
+  border-radius: 5px; 
+}
+
+#id_deal_number__contains,
+#id_deal_number__gte,
+#id_deal_number__lte,
+#id_deal_date__gte,
+#id_deal_date__lte,
+#id_value_date__gte,
+#id_value_date__lte {
+  position: fixed;
+  width: 10%;
+  left: 50%;
+  padding: 6px 20px;
+  border-radius: 5px;
 }
 
 #id_username,
 #id_password {
 
   width: 80%;
+}
+
+.left {
+  position: fixed;
+  left: 30%;
 }
 
 .button_form {
@@ -26,8 +77,9 @@
 }
 
 form {
-  min-height: 20%;
+  min-height: 30%;
   font-weight: 700;
+  font-size: 16px;
   width: 50%;
   position: absolute;
   left: 25%;

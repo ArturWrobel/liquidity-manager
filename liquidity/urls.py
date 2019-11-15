@@ -29,7 +29,6 @@ urlpatterns = [
     path('api/yieldchart/data/', YieldChartData.as_view()),
     path('yieldchart/', YieldChartView.as_view()),
 
-    url(r'^list_users/$', ListUsers.as_view(), name='list-users'),
     url(r'^login/$', LoginView.as_view(), name='login'),
     url(r'^logout/$', LogoutView.as_view(), name='logout'),
     url(r'^add_user/$', AddUser.as_view(), name='add-user'),

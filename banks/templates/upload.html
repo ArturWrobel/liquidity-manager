@@ -6,11 +6,12 @@
 <script src="{% static 'js/app.js' %}"></script>
 
 <form method="POST" enctype="multipart/form-data">
-    <h2 id="ticket_center">Upload Page</h2>
+    <h2 id="ticket_center">Files Upload</h2>
     <hr>
     {% csrf_token %}
-
-    <input class="textWrapper" type="file" name="document">
+    <p class="text textWrapper"> Chose file: </p>
+    <br>
+    <input class="textWrapper button_form" type="file" name="document">
     <button type="submit" class="button_form">
         Upload file
     </button>
