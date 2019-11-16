@@ -394,8 +394,7 @@ class ChartData2(APIView):
     permission_classes = []
 
     def get(self, request, bank_acc, format=None):
-
-        start_date = date.today()
+        start_date = Account.start_date
 
         salda = Account.pick_bank(bank_acc).objects.filter(
             date__range=[str(start_date), str(start_date + timedelta(days=30))]

@@ -27,10 +27,12 @@ th {
 
 .numbers {
   text-align: right;
-  padding-right: 3%;
+  padding-right: 1%;
+  width: 9%;
 }
 
 .label {
+  width: 9%;
   font-size: 18px;
   font-weight: bolder;
   font-size: larger;
@@ -62,6 +64,5 @@ th {
 
 .highlight {
   color: rgb(236, 20, 20);
-  line-height: 30px;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 18px;
   }
