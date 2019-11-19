@@ -33,6 +33,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
 from banks.serializers import *
+
 from .filters import *
 
 from bokeh.plotting import figure
@@ -398,7 +399,7 @@ class ChartData2(APIView):
 
         salda = Account.pick_bank(bank_acc).objects.filter(
             date__range=[str(start_date), str(start_date + timedelta(days=30))]
-        )
+        ).order_by('date')
 
         # serializer = CitiSerializer(salda, many=True)
         # serializer = CitiSerializer()
@@ -916,50 +917,76 @@ class MarketDataImport(LoginRequiredMixin, View):
         usd = data.sheet_by_index(2)
         fx = data.sheet_by_index(3)
 
-        pln_query = PlnCurve.objects.create(
-            date="2019-07-12",
-            m1=pln.cell_value(1, 1),
-            m3=pln.cell_value(2, 1),
-            m6=pln.cell_value(3, 1),
-            y1=pln.cell_value(4, 1),
-            y2=pln.cell_value(5, 1),
-            y3=pln.cell_value(6, 1),
-            y4=pln.cell_value(7, 1),
-            y5=pln.cell_value(8, 1),
-            y6=pln.cell_value(9, 1),
-            y7=pln.cell_value(10, 1),
-            y8=pln.cell_value(11, 1),
-            y9=pln.cell_value(12, 1),
-            y10=pln.cell_value(13, 1),
-            y12=pln.cell_value(14, 1),
-            y15=pln.cell_value(15, 1),
-            y20=pln.cell_value(16, 1),
-        )
-        pln_query.save()
-        eur_query = EurCurve.objects.create(
-            date="2019-07-12",
-            m1=eur.cell_value(1, 1),
-            m3=eur.cell_value(2, 1),
-            m6=eur.cell_value(3, 1),
-            y1=eur.cell_value(4, 1),
-            y2=eur.cell_value(5, 1),
-            y3=eur.cell_value(6, 1),
-            y4=eur.cell_value(7, 1),
-            y5=eur.cell_value(8, 1),
-            y6=eur.cell_value(9, 1),
-            y7=eur.cell_value(10, 1),
-            y8=eur.cell_value(11, 1),
-            y9=eur.cell_value(12, 1),
-            y10=eur.cell_value(13, 1),
-            y12=eur.cell_value(14, 1),
-            y15=eur.cell_value(15, 1),
-            y20=eur.cell_value(16, 1),
-            y30=eur.cell_value(17, 1),
-            y50=eur.cell_value(18, 1),
-        )
-        eur_query.save()
+        pln_date =  xlrd.xldate_as_tuple(pln.cell_value(0,0), data.datemode)
+        pln_date = datetime(pln_date[0], pln_date[1], pln_date[2])
+        pln_date = pln_date.date()
+
+        last_date = PlnCurve.objects.last()
+        
+        if pln_date == last_date.date:
+            pln = "PLN"
+            out = {"title": "Alert", "alert": "Market Data in loaded file have wrong value date. Data for {} for {} already exist in database.".format(last_date.date, pln)}
+            return render(request, "alert.html", out)
+        else:              
+            pln_query = PlnCurve.objects.create(
+                date=pln_date,
+                m1=pln.cell_value(1, 1),
+                m3=pln.cell_value(2, 1),
+                m6=pln.cell_value(3, 1),
+                y1=pln.cell_value(4, 1),
+                y2=pln.cell_value(5, 1),
+                y3=pln.cell_value(6, 1),
+                y4=pln.cell_value(7, 1),
+                y5=pln.cell_value(8, 1),
+                y6=pln.cell_value(9, 1),
+                y7=pln.cell_value(10, 1),
+                y8=pln.cell_value(11, 1),
+                y9=pln.cell_value(12, 1),
+                y10=pln.cell_value(13, 1),
+                y12=pln.cell_value(14, 1),
+                y15=pln.cell_value(15, 1),
+                y20=pln.cell_value(16, 1),
+            )
+            pln_query.save()
+
+        eur_date =  xlrd.xldate_as_tuple(eur.cell_value(0,0), data.datemode)
+        eur_date = datetime(eur_date[0], eur_date[1], eur_date[2])
+        eur_date = eur_date.date()
+
+        if pln_date == last_date.date:
+            eur = "EUR"
+            out = {"title": "Alert", "alert": "Market Data in loaded file have wrong value date. Data for {} for {} already exist in database.".format(last_date.date, eur)}
+            return render(request, "alert.html", out)
+        else: 
+            eur_query = EurCurve.objects.create(
+                date=eur_date,
+                m1=eur.cell_value(1, 1),
+                m3=eur.cell_value(2, 1),
+                m6=eur.cell_value(3, 1),
+                y1=eur.cell_value(4, 1),
+                y2=eur.cell_value(5, 1),
+                y3=eur.cell_value(6, 1),
+                y4=eur.cell_value(7, 1),
+                y5=eur.cell_value(8, 1),
+                y6=eur.cell_value(9, 1),
+                y7=eur.cell_value(10, 1),
+                y8=eur.cell_value(11, 1),
+                y9=eur.cell_value(12, 1),
+                y10=eur.cell_value(13, 1),
+                y12=eur.cell_value(14, 1),
+                y15=eur.cell_value(15, 1),
+                y20=eur.cell_value(16, 1),
+                y30=eur.cell_value(17, 1),
+                y50=eur.cell_value(18, 1),
+            )
+            eur_query.save()
+
+        usd_date =  xlrd.xldate_as_tuple(usd.cell_value(0,0), data.datemode)
+        usd_date = datetime(usd_date[0], usd_date[1], usd_date[2])
+        usd_date = usd_date.date()
+
         usd_query = UsdCurve.objects.create(
-            date="2019-07-12",
+            date=usd_date,
             m1=usd.cell_value(1, 1),
             m3=usd.cell_value(2, 1),
             m6=usd.cell_value(3, 1),

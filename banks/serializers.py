@@ -1,7 +1,7 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 from .models import *
 
-class CitiSerializer(ModelSerializer):
+class CitiSerializer(serializers.ModelSerializer):
     class Meta:
         model = Citi
         fields = ["date", "inflows", "outflows"]
