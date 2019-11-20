@@ -44,6 +44,8 @@ from django.db.models import F, Value
 from django.db.models.functions import Lag
 from django.db.models.expressions import Window
 
+from django.utils.datastructures import MultiValueDictKeyError
+
 
 class Start(View):
     def get(self, request):
@@ -788,35 +790,38 @@ def update_deal(request, deal_number):
 
 class DataImport(LoginRequiredMixin, View):
     login_url = "/accounts/login/"
-
+    
     def get(self, request):
-        file_location = "C:/Users/ARW/Dev/Liquidity/src/media/flows.xlsx"
-        data = xlrd.open_workbook(file_location)
+        try:
+            file_location = "C:/Users/ARW/Dev/Liquidity/src/media/flows.xlsx"
+            data = xlrd.open_workbook(file_location)
 
-        ci = data.sheet_by_index(0)
-        mb = data.sheet_by_index(1)
-        so = data.sheet_by_index(2)
-        sa = data.sheet_by_index(3)
+            ci = data.sheet_by_index(0)
+            mb = data.sheet_by_index(1)
+            so = data.sheet_by_index(2)
+            sa = data.sheet_by_index(3)
 
-        all = [[ci, Citi],[mb, mBank],[so, Societe],[sa, Santander]]
+            all = [[ci, Citi],[mb, mBank],[so, Societe],[sa, Santander]]
 
-        j = 0
-        for j in range(len(all)):
-            i = 0
-            for row in range((all[j][0]).nrows - 1):
-                first_date =  xlrd.xldate_as_tuple((all[j][0]).cell_value(1,0), data.datemode)
-                first_date = datetime(first_date[0], first_date[1], first_date[2])
-                first_date = first_date.date()
-                # format first_date: tuple => datetime => date
+            j = 0
+            for j in range(len(all)):
+                i = 0
+                for row in range((all[j][0]).nrows - 1):
+                    first_date =  xlrd.xldate_as_tuple((all[j][0]).cell_value(1,0), data.datemode)
+                    first_date = datetime(first_date[0], first_date[1], first_date[2])
+                    first_date = first_date.date()
+                    # format first_date: tuple => datetime => date
 
-                dat = first_date + timedelta(days=i)
-                flows = all[j][1].objects.get(date="{}".format(dat))
-                flows.inflows = all[j][0].cell_value(row + 1, 1)
-                flows.outflows = all[j][0].cell_value(row + 1, 2)
-                flows.save()
-                i += 1
-            j += 1
-
+                    dat = first_date + timedelta(days=i)
+                    flows = all[j][1].objects.get(date="{}".format(dat))
+                    flows.inflows = all[j][0].cell_value(row + 1, 1)
+                    flows.outflows = all[j][0].cell_value(row + 1, 2)
+                    flows.save()
+                    i += 1
+                j += 1
+        except FileNotFoundError as error:
+            return render(request, "alert.html", {"alert": "Error: there is no file Flows.xlsx uploaded."})
+        
         # recalculate(str(date.today()), Citi, 365) /// do zastanowienia
 
         out = {"title": "Import"}
@@ -826,11 +831,15 @@ class DataImport(LoginRequiredMixin, View):
 @login_required(login_url="/accounts/login/")
 def upload(request):
     ctx = {"title": "Upload"}
-    if request.method == "POST":
-        uploaded_file = request.FILES["document"]
-        fs = FileSystemStorage()
-        name = fs.save(uploaded_file.name, uploaded_file)
-        ctx["url"] = fs.url(name)
+    try:
+        if request.method == "POST":
+            uploaded_file = request.FILES["document"]
+            fs = FileSystemStorage()
+            name = fs.save(uploaded_file.name, uploaded_file)
+            ctx["url"] = fs.url(name)
+    except MultiValueDictKeyError as error:
+        return render(request, "alert.html", {"alert": "Error: please specify file before we proceed."})
+    
     return render(request, "upload.html", ctx)
 
 class LoginView(View):
@@ -921,70 +930,66 @@ class MarketDataImport(LoginRequiredMixin, View):
         pln_date = datetime(pln_date[0], pln_date[1], pln_date[2])
         pln_date = pln_date.date()
 
-        last_date = PlnCurve.objects.last()
-        
-        if pln_date == last_date.date:
-            pln = "PLN"
-            out = {"title": "Alert", "alert": "Market Data in loaded file have wrong value date. Data for {} for {} already exist in database.".format(last_date.date, pln)}
-            return render(request, "alert.html", out)
-        else:              
-            pln_query = PlnCurve.objects.create(
-                date=pln_date,
-                m1=pln.cell_value(1, 1),
-                m3=pln.cell_value(2, 1),
-                m6=pln.cell_value(3, 1),
-                y1=pln.cell_value(4, 1),
-                y2=pln.cell_value(5, 1),
-                y3=pln.cell_value(6, 1),
-                y4=pln.cell_value(7, 1),
-                y5=pln.cell_value(8, 1),
-                y6=pln.cell_value(9, 1),
-                y7=pln.cell_value(10, 1),
-                y8=pln.cell_value(11, 1),
-                y9=pln.cell_value(12, 1),
-                y10=pln.cell_value(13, 1),
-                y12=pln.cell_value(14, 1),
-                y15=pln.cell_value(15, 1),
-                y20=pln.cell_value(16, 1),
-            )
-            pln_query.save()
-
         eur_date =  xlrd.xldate_as_tuple(eur.cell_value(0,0), data.datemode)
         eur_date = datetime(eur_date[0], eur_date[1], eur_date[2])
         eur_date = eur_date.date()
-
-        if pln_date == last_date.date:
-            eur = "EUR"
-            out = {"title": "Alert", "alert": "Market Data in loaded file have wrong value date. Data for {} for {} already exist in database.".format(last_date.date, eur)}
-            return render(request, "alert.html", out)
-        else: 
-            eur_query = EurCurve.objects.create(
-                date=eur_date,
-                m1=eur.cell_value(1, 1),
-                m3=eur.cell_value(2, 1),
-                m6=eur.cell_value(3, 1),
-                y1=eur.cell_value(4, 1),
-                y2=eur.cell_value(5, 1),
-                y3=eur.cell_value(6, 1),
-                y4=eur.cell_value(7, 1),
-                y5=eur.cell_value(8, 1),
-                y6=eur.cell_value(9, 1),
-                y7=eur.cell_value(10, 1),
-                y8=eur.cell_value(11, 1),
-                y9=eur.cell_value(12, 1),
-                y10=eur.cell_value(13, 1),
-                y12=eur.cell_value(14, 1),
-                y15=eur.cell_value(15, 1),
-                y20=eur.cell_value(16, 1),
-                y30=eur.cell_value(17, 1),
-                y50=eur.cell_value(18, 1),
-            )
-            eur_query.save()
 
         usd_date =  xlrd.xldate_as_tuple(usd.cell_value(0,0), data.datemode)
         usd_date = datetime(usd_date[0], usd_date[1], usd_date[2])
         usd_date = usd_date.date()
 
+        last_PLN_date = PlnCurve.objects.last()
+        last_EUR_date = EurCurve.objects.last()
+        last_USD_date = UsdCurve.objects.last()
+
+        if pln_date == last_PLN_date.date or eur_date == last_EUR_date.date or usd_date == last_USD_date:
+            out = {"title": "Alert", "alert": "Market Data in loaded file have wrong value date. Data for {} already exist in database.".format(last_PLN_date.date)}
+            return render(request, "alert.html", out)
+                
+        pln_query = PlnCurve.objects.create(
+            date=pln_date,
+            m1=pln.cell_value(1, 1),
+            m3=pln.cell_value(2, 1),
+            m6=pln.cell_value(3, 1),
+            y1=pln.cell_value(4, 1),
+            y2=pln.cell_value(5, 1),
+            y3=pln.cell_value(6, 1),
+            y4=pln.cell_value(7, 1),
+            y5=pln.cell_value(8, 1),
+            y6=pln.cell_value(9, 1),
+            y7=pln.cell_value(10, 1),
+            y8=pln.cell_value(11, 1),
+            y9=pln.cell_value(12, 1),
+            y10=pln.cell_value(13, 1),
+            y12=pln.cell_value(14, 1),
+            y15=pln.cell_value(15, 1),
+            y20=pln.cell_value(16, 1),
+        )
+        pln_query.save()
+      
+        eur_query = EurCurve.objects.create(
+            date=eur_date,
+            m1=eur.cell_value(1, 1),
+            m3=eur.cell_value(2, 1),
+            m6=eur.cell_value(3, 1),
+            y1=eur.cell_value(4, 1),
+            y2=eur.cell_value(5, 1),
+            y3=eur.cell_value(6, 1),
+            y4=eur.cell_value(7, 1),
+            y5=eur.cell_value(8, 1),
+            y6=eur.cell_value(9, 1),
+            y7=eur.cell_value(10, 1),
+            y8=eur.cell_value(11, 1),
+            y9=eur.cell_value(12, 1),
+            y10=eur.cell_value(13, 1),
+            y12=eur.cell_value(14, 1),
+            y15=eur.cell_value(15, 1),
+            y20=eur.cell_value(16, 1),
+            y30=eur.cell_value(17, 1),
+            y50=eur.cell_value(18, 1),
+        )
+        eur_query.save()
+        
         usd_query = UsdCurve.objects.create(
             date=usd_date,
             m1=usd.cell_value(1, 1),
@@ -1008,7 +1013,7 @@ class MarketDataImport(LoginRequiredMixin, View):
         )
         eur_query.save()
 
-        out = {"title": "Market Data Import"}
+        out = {"title": "Market Data Import", "date": last_PLN_date.date}
         return render(request, "marketdataimport.html", out)
 
 

@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="{% static 'css/ticket.css' %}">
 <script src="{% static 'js/app.js' %}"></script>
 
-<form method="POST" enctype="multipart/form-data">
+<form method="POST" enctype="multipart/form-data" id="xx">
     <h2 id="ticket_center">Files Upload</h2>
     <hr>
     {% csrf_token %}
@@ -17,8 +17,20 @@
     </button>
 </form>
 
+<h2 id="dialog"></h2>
+
 {% if url %}
-<p>Uploaded file: <a href="{{ url }}"> {{ url }} </a></p>
+<p class="upload">Uploaded file: <a href="{{ url }}"> {{ url }} </a></p>
 {% endif %}
+
+
+
+<script type="text/javascript">
+    var txt = "File uploaded succesfully."
+
+    $("#xx").on('submit', function (event) {
+                alert("File uploaded succesfully.");
+            });
+</script>
 
 {% endblock %}
