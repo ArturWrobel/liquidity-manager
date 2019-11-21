@@ -52,12 +52,15 @@ class Start(View):
         out = {"title": "Start"}
         return render(request, "index.html", out)
 
-
 class Home(View):
     def get(self, request):
         out = {"title": "Home"}
         return render(request, "home.html", out)
 
+class About(View):
+    def get(self, request):
+        out = {"title": "About"}
+        return render(request, "about.html", out)
 
 class Account(LoginRequiredMixin, View):
     login_url = "/accounts/login/"

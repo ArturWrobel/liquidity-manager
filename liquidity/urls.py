@@ -7,8 +7,9 @@ from banks.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', Start.as_view()),
-
     path('home/', Home.as_view()),
+    path('about/', About.as_view()),
+
     path('bank_acc/<bank_acc>', Account.as_view(), name = 'account'),
     path('update/<bank_acc>/<date>',update_view),
     path('updatedeal/<deal_number>',update_deal),
