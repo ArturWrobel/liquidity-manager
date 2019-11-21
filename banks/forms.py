@@ -131,7 +131,22 @@ class DepoForm(forms.ModelForm):
             "currency_base",
             "amount_in_base_cur",
             "interest_rate",
-        ]
+        ]        
+
+    def clean_amount_in_base_cur(self):
+        amount_in_base_cur = self.cleaned_data.get("amount_in_base_cur")
+
+        if amount_in_base_cur < 0:
+            raise forms.ValidationError("Amount cannot be lower than 0")
+        return amount_in_base_cur
+
+    def clean(self):
+        cleaned_data = super().clean()
+        value_date = cleaned_data.get("value_date")
+        expiry_date = cleaned_data.get("expiry_date")
+        if value_date and  expiry_date:
+            if value_date >= expiry_date:
+                raise forms.ValidationError("Value Date must be before Expiry Date")
 
 
 class EditDepoForm(forms.ModelForm):
@@ -146,6 +161,14 @@ class EditDepoForm(forms.ModelForm):
             "amount_in_base_cur",
             "interest_rate",
         ]
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        value_date = cleaned_data.get("value_date")
+        expiry_date = cleaned_data.get("expiry_date")
+        if value_date and  expiry_date:
+            if value_date >= expiry_date:
+                raise forms.ValidationError("Value Date must be before Expiry Date")
 
 
 class DealSearchForm(forms.Form):

@@ -33,10 +33,10 @@
       $( "#id_interest_rate" ).attr("placeholder", "XX.xx %");
     } );
     $( function() {
-      $( "#id_amount_in_base_cur,#id_amount_in_side_cur" ).attr("placeholder", "input amount");
+      $( "#id_amount_in_base_cur,#id_amount_in_side_cur" ).attr("placeholder", "input amount").prop('min',0);
     } );
     $( function() {
-      $( "#id_exchange_rate" ).attr("placeholder", "FX rate");
+      $( "#id_exchange_rate" ).attr("placeholder", "FX rate").prop('min',0);
     } );
     </script>
         

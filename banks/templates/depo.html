@@ -5,21 +5,39 @@
 
 <link rel="stylesheet" href="{% static 'css/ticket.css' %}">
 
-<form action="" method="post">
+<form action="" method="post" id="depo">
   {% csrf_token %}
-  <h2 id = "ticket_center">Depo deal</h2>
+  <h2 id="ticket_center">Depo deal</h2>
   <hr>
-  {% for field in form %}
-    <div class="textWrapper">
-      <br>
-      {{field.label_tag}} {{field}}
-    </div>
+
+  <br>
+  <div class="errors">
+  {% for error in form.non_field_errors %}
+  {{ error }}
   {% endfor %}
+  </div>
+
+  <br>
+
+  {% for field in form %}
+  <div class="textWrapper">
     <br>
+    {{field.label_tag}} {{field}}
+  </div>
+  {% endfor %}
+  <br>
   <input type="submit" value="New Depo" class="textWrapper button_form">
-   
+
   <br>
   <br>
+<!--  
+  <div style="font-size: 20px;" id="dialog">
+    {% for error in form.amount_in_base_cur.errors %}
+    {{ error }}
+    {% endfor %}
+    </div>
+  <br>
+-->  
 </form>
 
-{% endblock %}  
+{% endblock %}
