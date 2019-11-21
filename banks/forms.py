@@ -76,7 +76,17 @@ class SpotForm(forms.ModelForm):
             "amount_in_side_cur",
             "exchange_rate",
         ]
-
+    def clean_amount_in_base_cur(self):
+        amount_in_base_cur = self.cleaned_data.get("amount_in_base_cur")
+        if amount_in_base_cur < 0:
+            raise forms.ValidationError("Amount cannot be lower than 0")
+        return amount_in_base_cur
+    
+    def clean_amount_in_side_cur(self):
+        amount_in_side_cur = self.cleaned_data.get("amount_in_side_cur")
+        if amount_in_side_cur < 0:
+            raise forms.ValidationError("Amount cannot be lower than 0")
+        return amount_in_side_cur
 
 class EditSpotForm(forms.ModelForm):
     class Meta:
@@ -104,6 +114,12 @@ class TransferForm(forms.ModelForm):
             "currency_base",
             "amount_in_base_cur",
         ]
+    
+    def clean_amount_in_base_cur(self):
+        amount_in_base_cur = self.cleaned_data.get("amount_in_base_cur")
+        if amount_in_base_cur < 0:
+            raise forms.ValidationError("Amount cannot be lower than 0")
+        return amount_in_base_cur
 
 
 class EditTransferForm(forms.ModelForm):
@@ -117,8 +133,7 @@ class EditTransferForm(forms.ModelForm):
             "currency_base",
             "amount_in_base_cur",
         ]
-
-
+    
 class DepoForm(forms.ModelForm):
     
     class Meta:
@@ -135,7 +150,6 @@ class DepoForm(forms.ModelForm):
 
     def clean_amount_in_base_cur(self):
         amount_in_base_cur = self.cleaned_data.get("amount_in_base_cur")
-
         if amount_in_base_cur < 0:
             raise forms.ValidationError("Amount cannot be lower than 0")
         return amount_in_base_cur

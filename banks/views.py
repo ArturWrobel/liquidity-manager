@@ -838,7 +838,7 @@ def upload(request):
             name = fs.save(uploaded_file.name, uploaded_file)
             ctx["url"] = fs.url(name)
     except MultiValueDictKeyError as error:
-        return render(request, "alert.html", {"alert": "Error: please specify file before we proceed."})
+        return render(request, "alert.html", {"alert": "Please specify file before we proceed"})
     
     return render(request, "upload.html", ctx)
 
