@@ -42,4 +42,7 @@ urlpatterns = [
     path('przelicznik/', Przelicznik.as_view()),
     path('', include('banks.urls')),
     url(r'^deals/', deals),
+
+    path("mat/", chartDemo.as_view()),
+  
 ]

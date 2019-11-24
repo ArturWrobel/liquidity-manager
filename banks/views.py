@@ -46,6 +46,35 @@ from django.db.models.expressions import Window
 
 from django.utils.datastructures import MultiValueDictKeyError
 
+import matplotlib.pyplot as plt
+import math, random
+import PIL.Image as Image
+
+class chartDemo(View):
+    def get(self, request):
+        # Dane
+        data_len = 3000
+        data = [ math.sin(x*0.01) for x in range(data_len) ]
+        data = list(map(lambda x: x + random.random()*0.8 - 0.4, data))
+        a = 0.95
+        for no,val in enumerate(data[1:]):
+            data[no+1] = data[no+1]*(1.0-a) + data[no]*a
+
+        # Rysowanie wykresu
+        fig = plt.figure()
+        plt.plot(data,'ro-')
+
+        # Zapis do obrazka
+        buffer = HttpResponse()
+        buffer['Content-Type'] = 'image/png'
+
+        canvas = fig.canvas
+        canvas.draw()
+        pilImage = Image.frombytes("RGB", canvas.get_width_height(), canvas.tostring_rgb())
+        pilImage.save(buffer, "PNG")
+
+        # Zwracanie odpowiedzi
+        return buffer
 
 class Start(View):
     def get(self, request):

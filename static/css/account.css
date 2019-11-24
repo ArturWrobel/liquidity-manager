@@ -7,6 +7,7 @@ tr {
   line-height: 17px;
 }
   
+
 table tr:nth-child(odd) th {
   background-color: #f9f9f9
 }
