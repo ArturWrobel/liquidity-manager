@@ -956,7 +956,10 @@ class MarketDataImport(LoginRequiredMixin, View):
         pln = data.sheet_by_index(0)
         eur = data.sheet_by_index(1)
         usd = data.sheet_by_index(2)
-        fx = data.sheet_by_index(3)
+        pln1 = data.sheet_by_index(3)
+        eur1 = data.sheet_by_index(4)
+        usd1 = data.sheet_by_index(5)
+        fx = data.sheet_by_index(6)
 
         pln_date =  xlrd.xldate_as_tuple(pln.cell_value(0,0), data.datemode)
         pln_date = datetime(pln_date[0], pln_date[1], pln_date[2])
@@ -970,12 +973,12 @@ class MarketDataImport(LoginRequiredMixin, View):
         usd_date = datetime(usd_date[0], usd_date[1], usd_date[2])
         usd_date = usd_date.date()
 
-        last_PLN_date = PlnCurve.objects.last()
-        last_EUR_date = EurCurve.objects.last()
-        last_USD_date = UsdCurve.objects.last()
+        last_PLN_date = PlnCurve.objects.order_by("date").last()
+        last_EUR_date = EurCurve.objects.order_by("date").last()
+        last_USD_date = UsdCurve.objects.order_by("date").last()
 
         if pln_date == last_PLN_date.date or eur_date == last_EUR_date.date or usd_date == last_USD_date:
-            out = {"title": "Alert", "alert": "Market Data in loaded file have wrong value date. Data for {} already exist in database.".format(last_PLN_date.date)}
+            out = {"title": "Alert", "alert": "Market Data in loaded file have wrong value date. Data for {} already exist in database.".format(pln_date.date)}
             return render(request, "alert.html", out)
                 
         pln_query = PlnCurve.objects.create(
@@ -1044,6 +1047,118 @@ class MarketDataImport(LoginRequiredMixin, View):
             y50=usd.cell_value(18, 1),
         )
         eur_query.save()
+
+        pln1m_query = PLN1M.objects.create(
+            date=pln_date,
+            d1=pln1.cell_value(2, 4),    # wibor
+            m1=pln1.cell_value(6, 4),    # wibor      
+            m3=pln1.cell_value(45, 4),    # fra 1*2
+            m6=pln1.cell_value(49, 4),    # fra 3*6
+            m9=pln1.cell_value(52, 4),    # fra 6*9
+            y1=pln1.cell_value(56, 4),    # fra 9*12
+            y2=pln1.cell_value(14, 4),    # 2y 3m
+        )
+        pln1m_query.save()
+
+        pln3m_query = PLN3M.objects.create(
+            date=pln_date,
+            d1=pln1.cell_value(2, 4),    # wibor
+            m1=pln1.cell_value(6, 4),    # wibor  
+            m3=pln1.cell_value(7, 4),    # wibor
+            m6=pln1.cell_value(49, 4),    # fra 3*6
+            m9=pln1.cell_value(52, 4),    # fra 6*9
+            y1=pln1.cell_value(55, 4),    # fra 9*12
+            y2=pln1.cell_value(14, 4),    # 2y 3m...
+            y3=pln1.cell_value(15, 4),    #
+            y4=pln1.cell_value(16, 4),    #
+            y5=pln1.cell_value(17, 4),    #
+            y6=pln1.cell_value(18, 4),    #
+            y7=pln1.cell_value(19, 4),   #
+            y8=pln1.cell_value(20, 4),   #
+            y9=pln1.cell_value(21, 4),   #
+            y10=pln1.cell_value(22, 4),  #
+        )
+        pln3m_query.save()
+
+        pln6m_query = PLN6M.objects.create(
+            date=pln_date,
+            d1=pln1.cell_value(2, 4),    # wibor
+            m1=pln1.cell_value(6, 4),    # wibor  
+            m3=pln1.cell_value(7, 4),    # wibor
+            m6=pln1.cell_value(8, 4),    # wibor
+            m9=pln1.cell_value(58, 4),    # fra 3*9
+            y1=pln1.cell_value(61, 4),    # fra 6*12
+            y2=pln1.cell_value(25, 4),    # 2y 6m...
+            y3=pln1.cell_value(26, 4),    # 
+            y4=pln1.cell_value(27, 4),    # 
+            y5=pln1.cell_value(28, 4),    # 
+            y6=pln1.cell_value(29, 4),    # 
+            y7=pln1.cell_value(30, 4),   # 
+            y8=pln1.cell_value(31, 4),   # 
+            y9=pln1.cell_value(32, 4),   # 
+            y10=pln1.cell_value(33, 4),  # 
+        )
+        pln6m_query.save()
+
+        eur3m_query = EUR3M.objects.create(
+            date=eur_date,
+            d1=eur1.cell_value(3, 4),    # eonia
+            m1=eur1.cell_value(5, 4),    # euribor
+            m3=eur1.cell_value(6, 4),    # euribor
+            m6=eur1.cell_value(37, 4),    # fra 3*6
+            m9=eur1.cell_value(40, 4),    # fra 6*9
+            y1=eur1.cell_value(43, 4),    # fra 9*12
+            y2=eur1.cell_value(12, 4),    # 2y 3m...
+            y3=eur1.cell_value(13, 4),    # 
+            y4=eur1.cell_value(14, 4),    # 
+            y5=eur1.cell_value(15, 4),    # 
+            y6=eur1.cell_value(16, 4),    # 
+            y7=eur1.cell_value(17, 4),   # 
+            y8=eur1.cell_value(18, 4),   # 
+            y9=eur1.cell_value(19, 4),   # 
+            y10=eur1.cell_value(20, 4),  # 
+        )
+        eur3m_query.save()
+
+        eur6m_query = EUR6M.objects.create(
+            date=eur_date,
+            d1=eur1.cell_value(3, 4),    # eonia
+            m1=eur1.cell_value(5, 4),    # euribor
+            m3=eur1.cell_value(6, 4),    # euribor
+            m6=eur1.cell_value(7, 4),    # euribor
+            m9=eur1.cell_value(51, 4),    # fra 3*9
+            y1=eur1.cell_value(55, 4),    # fra 6*12
+            y2=eur1.cell_value(24, 4),    # 2y 6m...
+            y3=eur1.cell_value(25, 4),    # 
+            y4=eur1.cell_value(26, 4),    # 
+            y5=eur1.cell_value(27, 4),    # 
+            y6=eur1.cell_value(28, 4),    # 
+            y7=eur1.cell_value(29, 4),   # 
+            y8=eur1.cell_value(30, 4),   # 
+            y9=eur1.cell_value(31, 4),   # 
+            y10=eur1.cell_value(32, 4),  # 
+        )
+        eur6m_query.save()
+
+        usd3m_query = USD3M.objects.create(
+            date=usd_date,
+            d1=usd1.cell_value(3, 4),    # libor
+            m1=usd1.cell_value(5, 4),    # libor
+            m3=usd1.cell_value(7, 4),    # libor
+            m6=usd1.cell_value(26, 4),    # fra 3*6
+            m9=usd1.cell_value(29, 4),    # fra 6*9
+            y1=usd1.cell_value(32, 4),    # fra 9*12
+            y2=usd1.cell_value(13, 4),    # 2y 3m...
+            y3=usd1.cell_value(14, 4),    # 
+            y4=usd1.cell_value(15, 4),    # 
+            y5=usd1.cell_value(16, 4),    # 
+            y6=usd1.cell_value(17, 4),    # 
+            y7=usd1.cell_value(18, 4),   # 
+            y8=usd1.cell_value(19, 4),   # 
+            y9=usd1.cell_value(20, 4),   # 
+            y10=usd1.cell_value(21,4)    # 
+        )
+        usd3m_query.save()
 
         out = {"title": "Market Data Import", "date": last_PLN_date.date}
         return render(request, "marketdataimport.html", out)
