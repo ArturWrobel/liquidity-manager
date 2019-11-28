@@ -978,7 +978,7 @@ class MarketDataImport(LoginRequiredMixin, View):
         last_USD_date = UsdCurve.objects.order_by("date").last()
 
         if pln_date == last_PLN_date.date or eur_date == last_EUR_date.date or usd_date == last_USD_date:
-            out = {"title": "Alert", "alert": "Market Data in loaded file have wrong value date. Data for {} already exist in database.".format(pln_date.date)}
+            out = {"title": "Alert", "alert": "Market Data in loaded file have wrong value date. Data for {} already exist in database.".format(pln_date)}
             return render(request, "alert.html", out)
                 
         pln_query = PlnCurve.objects.create(
@@ -1162,6 +1162,113 @@ class MarketDataImport(LoginRequiredMixin, View):
 
         out = {"title": "Market Data Import", "date": last_PLN_date.date}
         return render(request, "marketdataimport.html", out)
+
+from workalendar.europe import Poland, France, Germany
+from dateutil.relativedelta import *
+
+class Valuation (View):
+    def spot():
+        day = date.today()
+        cal = Poland()
+        out = cal.add_working_days(date(day.year, day.month, day.day),2)
+        return out
+
+    def data(term):
+        cal = Poland()
+        day = date.today()
+        a = PLN3M.objects.order_by("date").values().last()
+        
+        def test(d):
+            while cal.is_holiday(d) == True:
+                d = d + timedelta(days=1)
+            return d
+        base = 365
+
+        #cum_df = cumulated discount factors above 1 year
+
+        if term == "d1":
+            x = (cal.add_working_days(date(day.year, day.month, day.day),1) - day).days
+            y = round((1 / (1+(x/base*a[term]/100))),8)
+            cum_df = 0
+        elif term == "m1":
+            x = (test(Valuation.spot() + relativedelta(months=1))-day).days
+            y = round((1 / (1+(x/base*a[term]/100))),8)
+        elif term == "m3":
+            x = (test(Valuation.spot() + relativedelta(months=3))-day).days
+            y = round((1 / (1+(x/base*a[term]/100))),8)         
+        elif term == "m6":
+            x = (test(Valuation.spot() + relativedelta(months=6))-day).days 
+            y = round((1 / (1+(x/base*a[term]/100))),8)             
+        elif term == "m9":
+            x = (test(Valuation.spot() + relativedelta(months=9))-day).days
+            y = round((1 / (1+(x/base*a[term]/100))),8)    
+        elif term == "y1":
+            x = (test(Valuation.spot() + relativedelta(years=1))-day).days
+            y = round((1 / (1+(x/base*a[term]/100))),8)
+        elif term == "y2":
+            x = (test(Valuation.spot() + relativedelta(years=2))-day).days
+            y = round((1 / (1+(x/base*a[term]/100))),8)
+        elif term == "y3":
+            x = (test(Valuation.spot() + relativedelta(years=3))-day).days
+            y = round((1 / (1+(x/base*a[term]/100))),8)
+        elif term == "y4":
+            x = (test(Valuation.spot() + relativedelta(years=4))-day).days
+            y = round((1 / (1+(x/base*a[term]/100))),8)
+        elif term == "y5":
+            x = (test(Valuation.spot() + relativedelta(years=5))-day).days
+            y = round((1 / (1+(x/base*a[term]/100))),8)    
+        elif term == "y6":
+            x = (test(Valuation.spot() + relativedelta(years=6))-day).days
+            y = round((1 / (1+(x/base*a[term]/100))),8)
+        elif term == "y7":
+            x = (test(Valuation.spot() + relativedelta(years=7))-day).days
+            y = round((1 / (1+(x/base*a[term]/100))),8)
+        elif term == "y8":
+            x = (test(Valuation.spot() + relativedelta(years=8))-day).days
+            y = round((1 / (1+(x/base*a[term]/100))),8)
+        elif term == "y9":
+            x = (test(Valuation.spot() + relativedelta(years=9))-day).days
+            y = round((1 / (1+(x/base*a[term]/100))),8)
+        elif term == "y10":
+            x = (test(Valuation.spot() + relativedelta(years=10))-day).days
+            y = round((1 / (1+(x/base*a[term]/100))),8)
+        return [x,y]
+
+    def yieldcurve ():
+        y = PLN3M.objects.order_by("date").values().last()
+        curve = {}
+        z = list(y) # z[i] - keys for dictionary
+
+        #dtm = # days to manturity
+        #df = discount factor
+        #cum_df = cumulated discount factors above 1 year
+        #adf = adjusted discount factor
+
+        for i in range(1, len(z)):
+            
+            if Valuation.data("{}".format(z[i]))[0] < 365:
+                cum_df =0
+            elif Valuation.data("{}".format(z[i]))[0] >= 365:
+                cum_df = round((Valuation.data("{}".format(z[i]))[1] + curve["{}".format(z[i-1])]["cum_df"]),8)
+            
+            if Valuation.data("{}".format(z[i]))[0] < 375:
+                adf = 111
+            else:
+                adf = 555
+            
+            curve["{}".format(z[i])] = {"raw":y[z[i]], "dtm": Valuation.data("{}".format(z[i]))[0], "df": Valuation.data("{}".format(z[i]))[1], "cum_df": cum_df}
+
+            if Valuation.data("{}".format(z[i]))[0] < 375:
+                adf = round((curve["{}".format(z[i])]["df"]), 8)
+            else:
+                adf = round(((1 - (curve["{}".format(z[i])]["raw"]/100 * curve["{}".format(z[i-1])]["cum_df"])) /  (1 + curve["{}".format(z[i])]["raw"]/100)),8)
+            
+            curve["{}".format(z[i])] = {"raw":y[z[i]], "dtm": Valuation.data("{}".format(z[i]))[0], "df": Valuation.data("{}".format(z[i]))[1], "cum_df": cum_df,   "adf": adf}
+        return curve
+        
+print("----------------------------------------------------------------------------------------------------------------------------")
+print(Valuation.yieldcurve())
+
 
 
 class YieldChartView(LoginRequiredMixin, View):
