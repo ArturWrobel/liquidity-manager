@@ -573,6 +573,55 @@ class SpotDeal(LoginRequiredMixin, View):
         ctx = {"form": form, "title": "Spot"}
         return render(request, "spot.html", ctx)
 
+class ForwardDeal(LoginRequiredMixin, View):
+    login_url = "/accounts/login/"
+
+    def get(self, request):
+        form = ForwardForm(request.GET)
+        ctx = {"form": form, "title": "Forward"}
+        return render(request, "forward.html", ctx)
+
+    def post(self, request):
+        form = ForwardForm(request.POST)
+
+        username = request.user.username
+        time = datetime.now()
+
+        if form.is_valid():
+            dd = form.cleaned_data["deal_date"]
+            vd = form.cleaned_data["value_date"]
+            ed = form.cleaned_data["expiry_date"]
+            cc = form.cleaned_data["currency_cross"]
+            sd = form.cleaned_data["side"]
+            cp = form.cleaned_data["counterparty"]
+            am = form.cleaned_data["amount_in_base_cur"]
+            amt = form.cleaned_data["amount_in_side_cur"]
+            ex = form.cleaned_data["exchange_rate"]
+            fr = form.cleaned_data["forward_rate"]
+            
+            amt = am * ex
+
+            new_deal = Deals.objects.create(
+                deal_date=dd,
+                value_date=vd,
+                expiry_date=ed,
+                currency_cross=cc,
+                side=sd,
+                counterparty=cp,
+                amount_in_base_cur=am,
+                amount_in_side_cur=amt,
+                deal_kind="FWD",
+                exchange_rate=ex,
+                forward_rate=fr,
+                frontoffice=username,
+                fronttime=time,
+            )
+
+            return HttpResponseRedirect("/fwd/".format(new_deal.pk))
+
+        ctx = {"form": form, "title": "Forward"}
+        return render(request, "forward.html", ctx)
+
 
 class TransferDeal(LoginRequiredMixin, View):
     login_url = "/accounts/login/"
@@ -1322,7 +1371,7 @@ class Valuation (View):
             # all data {}
             curve["{}".format(z[i])] = {"raw":y[z[i]], "dtm": Valuation.data("{}".format(z[i]), cur)[0], "df": Valuation.data("{}".format(z[i]), cur)[1], "cum_df": cum_df,   "adf": adf}
 
-            exp_df = round(-np.log(curve[z[i]]["adf"])/(curve[z[i]]["dtm"]/bas)*100, 2)
+            exp_df = round(-np.log(curve[z[i]]["adf"])/(curve[z[i]]["dtm"]/bas)*100, 2)/100
             
             curve["{}".format(z[i])] = {"raw":y[z[i]], "dtm": Valuation.data("{}".format(z[i]), cur)[0], "df": Valuation.data("{}".format(z[i]), cur)[1], "cum_df": cum_df,   "adf": adf, "exp_df": exp_df,}
 
@@ -1383,6 +1432,9 @@ class FXValuation(View):
         # fwrd = full forward rate
         # df = discount factor
         zz = []
+        days = []
+        pl = []
+        eu = []
         for i in range (4, len(keys)-1):
             fwrd = round((query["spot"] + query["{}".format(keys[i])]/10000), 4)
             
@@ -1394,15 +1446,38 @@ class FXValuation(View):
 
             eur_df = round(np.exp((-np.interp(fxcurve["{}".format(keys[i])]["dtm"], Valuation.yieldcurve(EUR3M)[0], Valuation.yieldcurve(EUR3M)[2]))* fxcurve["{}".format(keys[i])]["dtm"]/365),8) 
             fxcurve["{}".format(keys[i])] = {"dtm": FXValuation.data("{}".format(keys[i])), "fwrd": fwrd, "pln_df": df, "eur_df": eur_df}
-
+            days.append(FXValuation.data("{}".format(keys[i])))
+            pl.append(df)
+            eu.append(eur_df)
                    
-        return fxcurve 
+        return [days, pl, eu]
 
+class ValuationReport(View):
+
+    def forwards():
+        day = date.today()
+        query = Deals.objects.filter(deal_kind = "FWD").filter(value_date__gte = day).order_by("deal_number")
+        keys_query = Deals.objects.filter(deal_kind = "FWD").order_by("deal_number").values().last()
+        keys = list(keys_query)
+
+        out = {}
+        for i in range (0, len(query)):
+            dtm = (query[i].expiry_date-day).days
+            nom = query[i].amount_in_base_cur
+            cross = query[i].currency_cross
+            name = query[i].counterparty
+            exch = query[i].exchange_rate
+            fwd = query[i].forward_rate
+            res = round((exch * nom * np.interp(dtm, FXValuation.fxyield()[0] , FXValuation.fxyield()[2] )- nom * fwd * np.interp(dtm, FXValuation.fxyield()[0] , FXValuation.fxyield()[1] )),2)
+            out[query[i].deal_number] = {"dtm": dtm, "name": name, "cross": cross, "nominal": nom, "fx rate": exch, "forward": fwd, "result": res }
+
+        return out
 
 #print(np.interp(55, Valuation.yieldcurve(PLN3M)[0], Valuation.yieldcurve(PLN3M)[1]))     
 print("----------------------------------------------------------------------------------------------------------------------------")
-print(Valuation.yieldcurve(EUR3M)[0])
-print(FXValuation.fxyield())
+print(ValuationReport.forwards())
+#print(FXValuation.fxyield()[0])
+#print(FXValuation.fxyield())
 
 class YieldChartView(LoginRequiredMixin, View):
     login_url = "/accounts/login/"

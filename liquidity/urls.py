@@ -16,6 +16,7 @@ urlpatterns = [
     path('depo/', DepoDeal.as_view()),
     path('spot/', SpotDeal.as_view()),
     path('txfr/', TransferDeal.as_view()),
+    path('fwd/', ForwardDeal.as_view()),
     path('dealsearch/', DealSearch.as_view(), name = 'search'),
     path('dealsearch_id/', DealSearchId.as_view(), name = 'search_id'),
     path('dealsfilter/', dealsfilter, name = 'deal-search'),

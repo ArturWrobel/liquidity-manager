@@ -88,6 +88,33 @@ class SpotForm(forms.ModelForm):
             raise forms.ValidationError("Amount cannot be lower than 0")
         return amount_in_side_cur
 
+class ForwardForm(forms.ModelForm):
+    class Meta:
+        model = Deals
+        fields = [
+            "counterparty",
+            "deal_date",
+            "value_date",
+            "expiry_date",
+            "currency_cross",
+            "side",
+            "amount_in_base_cur",
+            "amount_in_side_cur",
+            "exchange_rate",
+            "forward_rate"
+        ]
+    def clean_amount_in_base_cur(self):
+        amount_in_base_cur = self.cleaned_data.get("amount_in_base_cur")
+        if amount_in_base_cur < 0:
+            raise forms.ValidationError("Amount cannot be lower than 0")
+        return amount_in_base_cur
+    
+    def clean_amount_in_side_cur(self):
+        amount_in_side_cur = self.cleaned_data.get("amount_in_side_cur")
+        if amount_in_side_cur < 0:
+            raise forms.ValidationError("Amount cannot be lower than 0")
+        return amount_in_side_cur
+
 class EditSpotForm(forms.ModelForm):
     class Meta:
         model = Deals

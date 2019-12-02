@@ -120,7 +120,7 @@ class Santander(models.Model):
         return self.start_balance + self.result
 
 
-DEAL_KIND = (("DEPO", "DEPO"), ("TXFR", "TXFR"), ("FX", "FX"))
+DEAL_KIND = (("DEPO", "DEPO"), ("TXFR", "TXFR"), ("FX", "FX"), ("FWD", "FWD"))
 
 CURRENCY = (("PLN", "PLN"), ("EUR", "EUR"), ("USD", "USD"))
 
@@ -162,12 +162,11 @@ class Deals(models.Model):
     currency_cross = models.CharField(choices=CROSS_CURRENCY, null=True, max_length=7)
     side = models.CharField(choices=DEAL_SIDE, null=True, max_length=20)
     counterparty = models.CharField(choices=COUNTERPARTY, null=True, max_length=30)
-    counterparty_another = models.CharField(
-        choices=COUNTERPARTY, null=True, max_length=30
-    )
+    counterparty_another = models.CharField(choices=COUNTERPARTY, null=True, max_length=30)
     amount_in_base_cur = models.FloatField(null=True)
     amount_in_side_cur = models.FloatField(null=True)
     exchange_rate = models.FloatField(null=True)
+    forward_rate = models.FloatField(null=True)
     interest_rate = models.FloatField(null=True)
     interest_rate_amount = models.FloatField(null=True)
     basis = models.CharField(null=True, max_length=20)
