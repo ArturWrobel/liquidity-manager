@@ -1002,13 +1002,13 @@ class MarketDataImport(LoginRequiredMixin, View):
         file_location = "C:/Users/ARW/Dev/Liquidity/src/media/market_data.xlsx"
         data = xlrd.open_workbook(file_location)
 
-        pln = data.sheet_by_index(0)
-        eur = data.sheet_by_index(1)
-        usd = data.sheet_by_index(2)
+        pln  = data.sheet_by_index(0)
+        eur  = data.sheet_by_index(1)
+        usd  = data.sheet_by_index(2)
         pln1 = data.sheet_by_index(3)
         eur1 = data.sheet_by_index(4)
         usd1 = data.sheet_by_index(5)
-        fx = data.sheet_by_index(6)
+        fx   = data.sheet_by_index(6)
 
         pln_date =  xlrd.xldate_as_tuple(pln.cell_value(0,0), data.datemode)
         pln_date = datetime(pln_date[0], pln_date[1], pln_date[2])
@@ -1029,7 +1029,7 @@ class MarketDataImport(LoginRequiredMixin, View):
         if pln_date == last_PLN_date.date or eur_date == last_EUR_date.date or usd_date == last_USD_date:
             out = {"title": "Alert", "alert": "Market Data in loaded file have wrong value date. Data for {} already exist in database.".format(pln_date)}
             return render(request, "alert.html", out)
-                
+        
         pln_query = PlnCurve.objects.create(
             date=pln_date,
             m1=pln.cell_value(1, 1),
@@ -1211,10 +1211,10 @@ class MarketDataImport(LoginRequiredMixin, View):
 
         eurpln_query = EURPLN.objects.create(
             date=pln_date,
-            spot = fx.cell_value(1, 4),
+            spot = fx.cell_value(1, 1),
             on= fx.cell_value(7, 4),
             tn= fx.cell_value(8, 4),
-            sp= fx.cell_value(9, 4),
+            sn= fx.cell_value(9, 4),
             w1= fx.cell_value(10, 4),
             w2= fx.cell_value(11, 4),
             w3= fx.cell_value(12, 4),
@@ -1232,10 +1232,10 @@ class MarketDataImport(LoginRequiredMixin, View):
 
         usdpln_query = USDPLN.objects.create(
             date=pln_date,
-            spot = fx.cell_value(2, 4),
+            spot = fx.cell_value(2, 1),
             on= fx.cell_value(38, 4),
             tn= fx.cell_value(39, 4),
-            sp= fx.cell_value(40, 4),
+            sn= fx.cell_value(40, 4),
             w1= fx.cell_value(41, 4),
             w2= fx.cell_value(42, 4),
             w3= fx.cell_value(43, 4),
@@ -1250,8 +1250,7 @@ class MarketDataImport(LoginRequiredMixin, View):
             y2= fx.cell_value(52, 4)
         )
         usdpln_query.save()
-
-
+ 
         out = {"title": "Market Data Import", "date": last_PLN_date.date}
         return render(request, "marketdataimport.html", out)
 
@@ -1331,6 +1330,8 @@ class Valuation (View):
         return [x,y]
 
     def yieldcurve (cur):
+        start_timex = time.time()
+
         y = (cur).objects.order_by("date").values().last()
         curve = {}
         z = list(y) # z[i] - keys for dictionary
@@ -1347,7 +1348,7 @@ class Valuation (View):
         curve_days = []
         curve_df = []
         curve_rf = []
-
+        
         for i in range(1, len(z)):
             
             if Valuation.data("{}".format(z[i]), cur)[0] < 365:
@@ -1381,8 +1382,16 @@ class Valuation (View):
             curve_df.append(curve["{}".format(z[i])]["adf"])
             # curve for ndf calculation
             curve_rf.append(curve["{}".format(z[i])]["exp_df"])
+            #curve_array.append(curve["{}".format(z[i])]["dtm"], curve["{}".format(z[i])]["exp_df"], curve["{}".format(z[i])]["adf"] )
+        print("initial curve --- %s seconds ---{}".format(cur) % (time.time() - start_timex))           
+        curve_dayss = curve_days
+        curve_dfs = curve_df
+        curve_rfs = curve_rf
+        
+        #return curve_array
+        return [curve_dayss, curve_dfs, curve_rfs]
 
-        return [curve_days, curve_df, curve_rf]
+import time
 
 class FXValuation(View):  
     def data(term):
@@ -1422,11 +1431,17 @@ class FXValuation(View):
 
         return x
 
-    def fxyield():
-        query = EURPLN.objects.order_by("date").values().last()
+    def fxyield(cross):
+        start_time = time.time()
+        query = cross.objects.order_by("date").values().last()
         fxcurve = {}
         keys = list(query)
         cal = Poland()
+
+        if cross == EURPLN:
+            curve = EUR3M
+        elif cross == USDPLN:
+            curve = USD3M
                     
         # dtm = days to manturity
         # fwrd = full forward rate
@@ -1440,21 +1455,21 @@ class FXValuation(View):
             
             fxcurve["{}".format(keys[i])] = {"dtm": FXValuation.data("{}".format(keys[i])), "fwrd": fwrd}
 
-            xx =   round(np.exp(-np.interp(fxcurve["{}".format(keys[i])]["dtm"], Valuation.yieldcurve(EUR3M)[0], Valuation.yieldcurve(EUR3M)[2]) * fxcurve["{}".format(keys[i])]["dtm"]/365), 8)
-            zz.append(xx)
+            xx =   round(np.exp(-np.interp(fxcurve["{}".format(keys[i])]["dtm"], Valuation.yieldcurve(curve)[0], Valuation.yieldcurve(curve)[2]) * fxcurve["{}".format(keys[i])]["dtm"]/365), 8)
+            
             df = round((query["spot"] / fwrd * xx), 8)
 
-            eur_df = round(np.exp((-np.interp(fxcurve["{}".format(keys[i])]["dtm"], Valuation.yieldcurve(EUR3M)[0], Valuation.yieldcurve(EUR3M)[2]))* fxcurve["{}".format(keys[i])]["dtm"]/365),8) 
+            eur_df = round(np.exp((-np.interp(fxcurve["{}".format(keys[i])]["dtm"], Valuation.yieldcurve(curve)[0], Valuation.yieldcurve(curve)[2]))* fxcurve["{}".format(keys[i])]["dtm"]/365),8) 
             fxcurve["{}".format(keys[i])] = {"dtm": FXValuation.data("{}".format(keys[i])), "fwrd": fwrd, "pln_df": df, "eur_df": eur_df}
             days.append(FXValuation.data("{}".format(keys[i])))
             pl.append(df)
             eu.append(eur_df)
-                   
+        print("fx --- %s seconds ---{}".format(cross) % (time.time() - start_time))           
         return [days, pl, eu]
 
 class ValuationReport(View):
-
     def forwards():
+        start_timee = time.time()
         day = date.today()
         query = Deals.objects.filter(deal_kind = "FWD").filter(value_date__gte = day).order_by("deal_number")
         keys_query = Deals.objects.filter(deal_kind = "FWD").order_by("deal_number").values().last()
@@ -1468,16 +1483,20 @@ class ValuationReport(View):
             name = query[i].counterparty
             exch = query[i].exchange_rate
             fwd = query[i].forward_rate
-            res = round((exch * nom * np.interp(dtm, FXValuation.fxyield()[0] , FXValuation.fxyield()[2] )- nom * fwd * np.interp(dtm, FXValuation.fxyield()[0] , FXValuation.fxyield()[1] )),2)
+            res = round((exch * nom * np.interp(dtm, FXValuation.fxyield(EURPLN)[0] , FXValuation.fxyield(EURPLN)[2] )- nom * fwd * np.interp(dtm, FXValuation.fxyield(EURPLN)[0] , FXValuation.fxyield(EURPLN)[1] )),2)
             out[query[i].deal_number] = {"dtm": dtm, "name": name, "cross": cross, "nominal": nom, "fx rate": exch, "forward": fwd, "result": res }
 
+        print("final --- %s seconds ---" % (time.time() - start_timee))           
         return out
 
 #print(np.interp(55, Valuation.yieldcurve(PLN3M)[0], Valuation.yieldcurve(PLN3M)[1]))     
 print("----------------------------------------------------------------------------------------------------------------------------")
+#print(ValuationReport.a)
 print(ValuationReport.forwards())
 #print(FXValuation.fxyield()[0])
-#print(FXValuation.fxyield())
+#print(FXValuation.fxyield(EURPLN))
+#print(Valuation.yieldcurve(EUR3M))
+
 
 class YieldChartView(LoginRequiredMixin, View):
     login_url = "/accounts/login/"
