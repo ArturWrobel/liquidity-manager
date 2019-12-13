@@ -23,7 +23,8 @@ urlpatterns = [
     path('dataimport/', DataImport.as_view(), name = 'data-import'),
     path('marketdataimport/', MarketDataImport.as_view(), name = 'market-data-import'),
     path('upload/', upload, name = 'upload'),
-       
+    path('fxvalue/', dik),
+
     url(r'^api/chart/data/$', ChartData.as_view()),
     path('chart/', ChartView.as_view()),
     path('api/chart/data2/<bank_acc>', ChartData2.as_view()),

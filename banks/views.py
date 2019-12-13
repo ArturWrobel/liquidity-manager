@@ -1393,6 +1393,8 @@ class Valuation (View):
 
 import time
 
+VEURPLN = []
+
 class FXValuation(View):  
     def data(term):
         cal = Poland()
@@ -1464,10 +1466,16 @@ class FXValuation(View):
             days.append(FXValuation.data("{}".format(keys[i])))
             pl.append(df)
             eu.append(eur_df)
-        print("fx --- %s seconds ---{}".format(cross) % (time.time() - start_time))           
+        print("fx --- %s seconds ---{}".format(cross) % (time.time() - start_time))
+        VEURPLN.append(days)
+        VEURPLN.append(pl)
+        VEURPLN.append(eu)
         return [days, pl, eu]
 
+
 class ValuationReport(View):
+    FXValuation.fxyield(EURPLN)
+
     def forwards():
         start_timee = time.time()
         day = date.today()
@@ -1483,18 +1491,32 @@ class ValuationReport(View):
             name = query[i].counterparty
             exch = query[i].exchange_rate
             fwd = query[i].forward_rate
-            res = round((exch * nom * np.interp(dtm, FXValuation.fxyield(EURPLN)[0] , FXValuation.fxyield(EURPLN)[2] )- nom * fwd * np.interp(dtm, FXValuation.fxyield(EURPLN)[0] , FXValuation.fxyield(EURPLN)[1] )),2)
+            res = round((exch * nom * np.interp(dtm, VEURPLN[0] , VEURPLN[2] )- nom * fwd * np.interp(dtm, VEURPLN[0] , VEURPLN[1] )),2)
             out[query[i].deal_number] = {"dtm": dtm, "name": name, "cross": cross, "nominal": nom, "fx rate": exch, "forward": fwd, "result": res }
 
         print("final --- %s seconds ---" % (time.time() - start_timee))           
         return out
 
+
+
+def dik(request):
+    deals = Deals.objects.filter(deal_kind = "FWD")
+    ctx = {"deals": deals}
+    return render(request,  "fxvalue.html", ctx )
+
 #print(np.interp(55, Valuation.yieldcurve(PLN3M)[0], Valuation.yieldcurve(PLN3M)[1]))     
 print("----------------------------------------------------------------------------------------------------------------------------")
 #print(ValuationReport.a)
+#print("to jest to", VEURPLN)
+print("----------------------------------------------------------------------------------------------------------------------------")
+print("----------------------------------------------------------------------------------------------------------------------------")
+print("----------------------------------------------------------------------------------------------------------------------------")
+
+
 print(ValuationReport.forwards())
+
 #print(FXValuation.fxyield()[0])
-#print(FXValuation.fxyield(EURPLN))
+
 #print(Valuation.yieldcurve(EUR3M))
 
 
