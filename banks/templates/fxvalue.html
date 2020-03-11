@@ -1,10 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
 {% load render_table from django_tables2 %}
-<!doctype html>
-<html>
-    <head>
-        <title>All deals</title>
-    </head>
-    <body>
+
         {% render_table deals %}
-    </body>
-</html>
+
+
+<style>
+    table{
+        position: relative;
+        top: 50px;
+        font-size: 20px;
+    }
+</style>
+{% endblock %}

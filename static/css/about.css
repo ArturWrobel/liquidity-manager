@@ -6,6 +6,17 @@ body {
     overflow: hidden;
 }
 
+.bol {
+  font-weight: 600;
+  color: #1945d4;
+
+}
+
+.bolder {
+  font-weight: 700;
+  color: #DC143C;
+}
+
 .box {
 	max-width: 70vw;
 	padding: 30px;

@@ -43,6 +43,7 @@ from bokeh.models import HoverTool
 from django.db.models import F, Value
 from django.db.models.functions import Lag
 from django.db.models.expressions import Window
+import django_tables2 as tables
 
 from django.utils.datastructures import MultiValueDictKeyError
 
@@ -1263,6 +1264,7 @@ def spot():
     out = cal.add_working_days(date(day.year, day.month, day.day),2)
     return out
 
+
 class Valuation (View):
     def data(term, cu):
         cal = Poland()
@@ -1497,11 +1499,19 @@ class ValuationReport(View):
         print("final --- %s seconds ---" % (time.time() - start_timee))           
         return out
 
+""" data = [{"dtm":5, "name": "Robert", "num":1}, {"dtm":10, "name": "Ola", "num":1}, {"dtm":155, "name": "Zuza", "num":3}, {"dtm":580, "name": "Kot", "num":4}]
 
+class NdfTable(tables.Table):
+    dtm = tables.Column()
+    name = tables.Column()
+    num = tables.Column()
+
+table = NdfTable(data) """
 
 def dik(request):
-    deals = Deals.objects.filter(deal_kind = "FWD")
+    deals = NDFVALUATION.objects.all()
     ctx = {"deals": deals}
+    #ctx = {"deals": table}
     return render(request,  "fxvalue.html", ctx )
 
 #print(np.interp(55, Valuation.yieldcurve(PLN3M)[0], Valuation.yieldcurve(PLN3M)[1]))     
@@ -1511,12 +1521,8 @@ print("-------------------------------------------------------------------------
 print("----------------------------------------------------------------------------------------------------------------------------")
 print("----------------------------------------------------------------------------------------------------------------------------")
 print("----------------------------------------------------------------------------------------------------------------------------")
-
-
 print(ValuationReport.forwards())
-
 #print(FXValuation.fxyield()[0])
-
 #print(Valuation.yieldcurve(EUR3M))
 
 
